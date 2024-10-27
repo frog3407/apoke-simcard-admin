@@ -1,5 +1,8 @@
 import React from 'react'
-
+// simcard admin
+const OrderCreat = React.lazy(() => import('./views/order/creat'))
+const RechargeList = React.lazy(() => import('./views/recharge/list'))
+//default
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
@@ -53,6 +56,10 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
+  { path: '/order', name: 'Order', element: OrderCreat, exact: true },
+  { path: '/order/creat', name: 'Creat', element: OrderCreat },
+  { path: '/recharge', name: 'Recharge', element: RechargeList, exact: true },
+  { path: '/recharge/list', name: 'List', element: RechargeList },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },

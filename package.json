@@ -17,7 +17,7 @@
     "lint": "eslint \"src/**/*.js\"",
     "serve": "vite preview",
     "start": "vite",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build -r https://github.com/frog3407/apoke-simcard-admin.git"
   },
   "dependencies": {
     "@coreui/chartjs": "^4.0.0",
