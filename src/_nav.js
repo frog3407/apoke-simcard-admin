@@ -18,26 +18,16 @@ import {
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
-  // {
-  //   component: CNavItem,
-  //   name: 'Dashboard',
-  //   to: '/dashboard',
-  //   icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-  //   badge: {
-  //     color: 'info',
-  //     text: 'NEW',
-  //   },
-  // },
   {
     component: CNavGroup,
     name: '訂單管理',
-    to: '/order/creat',
+    to: '/order/create',
     icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: '建立訂單',
-        to: '/order/creat',
+        to: '/order/create',
       },
     ],
   },
@@ -51,6 +41,37 @@ const _nav = [
         component: CNavItem,
         name: '儲值紀錄',
         to: '/recharge/list',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: '產品管理',
+    to: '/product/channel1',
+    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: '渠道1',
+        to: '/product/channel1',
+      },
+      {
+        component: CNavItem,
+        name: '渠道2',
+        to: '/product/channel2',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: '經銷商管理',
+    to: '/admin/user/create',
+    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: '新增經銷商',
+        to: '/admin/user/create',
       },
     ],
   },

@@ -1,7 +1,12 @@
 import React from 'react'
 // simcard admin
-const OrderCreat = React.lazy(() => import('./views/order/creat'))
+//給經銷商用的
+const OrderCreate = React.lazy(() => import('./views/order/create'))
 const RechargeList = React.lazy(() => import('./views/recharge/list'))
+const product1 = React.lazy(() => import('./views/product/channel1'))
+const product2 = React.lazy(() => import('./views/product/channel2'))
+//給內部管理用的
+const UserCreate = React.lazy(() => import('./views/admin/user/create'))
 //default
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -55,12 +60,13 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/order', name: 'Order', element: OrderCreat, exact: true },
-  { path: '/order/creat', name: 'Creat', element: OrderCreat },
-  { path: '/recharge', name: 'Recharge', element: RechargeList, exact: true },
-  { path: '/recharge/list', name: 'List', element: RechargeList },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/', exact: true, name: '首頁' },
+  { path: '/dashboard', name: '主頁', element: Dashboard },
+  { path: '/order/create', name: '建立訂單', element: OrderCreate },
+  { path: '/recharge/list', name: '儲值紀錄', element: RechargeList },
+  { path: '/product/channel1', name: '渠道1', element: product1 },
+  { path: '/product/channel2', name: '渠道2', element: product2 },
+  { path: '/admin/user/create', name: '建立經銷商', element: UserCreate },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

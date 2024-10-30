@@ -11,7 +11,7 @@ import {
   CAccordionItem,
 } from '@coreui/react'
 
-const Creat = () => {
+const Create = () => {
   return (
     <>
       <CCard className="mb-4">
@@ -20,4 +20,4 @@ const Creat = () => {
     </>
   )
 }
-export default Creat
+export default Create
