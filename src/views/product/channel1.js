@@ -23,7 +23,7 @@ const Channel1 = () => {
   const [itemsPerPage] = useState(5) // 每頁顯示的資料數量
 
   useEffect(() => {
-    fetch('/joytel-products.xlsx')
+    fetch('./joytel-products.xlsx')
       .then((response) => response.arrayBuffer()) // 將檔案讀取為 ArrayBuffer
       .then((buffer) => {
         const workbook = XLSX.read(buffer, { type: 'array' })

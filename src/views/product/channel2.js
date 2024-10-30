@@ -14,9 +14,8 @@ import {
   CPagination,
   CPaginationItem,
 } from '@coreui/react'
-
+import { apiGetChannel2Products } from '../../utils/Api'
 const PageSize = 10 // 每次請求的資料數量
-const apiHost = import.meta.env.VITE_API_HOST
 const Channel2 = () => {
   const [data, setData] = useState([])
   const [currentPage, setCurrentPage] = useState(1) // 當前頁碼
@@ -29,10 +28,10 @@ const Channel2 = () => {
 
   const fetchData = async (page) => {
     try {
-      const response = await fetch(`${apiHost}/api/simcard/channel2/products?page=${page}`)
-      const result = await response.json()
-      console.log('apiHost=' + apiHost)
-      console.log('result.total=' + result.total)
+      let sendData = { page: page }
+      const result = await apiGetChannel2Products(sendData)
+
+      console.log('result=' + JSON.stringify(result))
       setData(result.data) // 更新狀態
       // 根據返回的資料更新總頁數，假設後端有提供 totalCount 或者有其他方式獲取總數
       setTotalPages(Math.ceil(result.total / PageSize))

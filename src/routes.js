@@ -1,12 +1,12 @@
 import React from 'react'
 // simcard admin
 //給經銷商用的
-const OrderCreate = React.lazy(() => import('./views/order/create'))
-const RechargeList = React.lazy(() => import('./views/recharge/list'))
-const product1 = React.lazy(() => import('./views/product/channel1'))
-const product2 = React.lazy(() => import('./views/product/channel2'))
+const OrderCreate = React.lazy(() => import('./views/order/Create'))
+const RechargeList = React.lazy(() => import('./views/recharge/List'))
+const Product1 = React.lazy(() => import('./views/product/Channel1'))
+const Product2 = React.lazy(() => import('./views/product/Channel2'))
 //給內部管理用的
-const UserCreate = React.lazy(() => import('./views/admin/user/create'))
+const UserCreate = React.lazy(() => import('./views/admin/user/Create'))
 //default
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -64,8 +64,8 @@ const routes = [
   { path: '/dashboard', name: '主頁', element: Dashboard },
   { path: '/order/create', name: '建立訂單', element: OrderCreate },
   { path: '/recharge/list', name: '儲值紀錄', element: RechargeList },
-  { path: '/product/channel1', name: '渠道1', element: product1 },
-  { path: '/product/channel2', name: '渠道2', element: product2 },
+  { path: '/product/channel1', name: '渠道1', element: Product1 },
+  { path: '/product/channel2', name: '渠道2', element: Product2 },
   { path: '/admin/user/create', name: '建立經銷商', element: UserCreate },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
