@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 let getHeaders = (useAuth = true) => {
   let headers = {
     'Content-Type': 'application/json',
@@ -24,13 +23,19 @@ const handlePayload = (payload) => {
 }
 
 export const getAuthToken = () => {
-  var token = cookies.get(TOKEN_NAME)
+  var token = localStorage.getItem('token')
   if (token != null) {
     return token
   } else {
     return null
   }
 }
+
+export const setAuthToken = (token) => {
+  localStorage.setItem('token', token)
+  //cookies.set(TOKEN_NAME, token, { path: '/' })
+}
+
 const handleResponse = async (response, isContinue, download) => {
   //   document.querySelector('.popup-loading').classList.remove('active')
 
@@ -87,4 +92,7 @@ export const fetchDataCall = async (
 
 //取得渠道2產品資料
 export const apiGetChannel2Products = (data) =>
-  fetchDataCall('channel2/products', 'get', data, false, false, false)
+  fetchDataCall('channel2/products', 'get', data, false, false, true)
+
+//登入
+export const apiLogin = (data) => fetchDataCall('user/login', 'post', data, false, false, false)

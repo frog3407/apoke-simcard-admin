@@ -21,7 +21,6 @@ const Channel2 = () => {
   const [currentPage, setCurrentPage] = useState(1) // 當前頁碼
   const [itemsPerPage] = useState(5) // 每頁顯示的資料數量
   const [totalPages, setTotalPages] = useState(0)
-
   useEffect(() => {
     fetchData(currentPage)
   }, [currentPage])
@@ -31,10 +30,10 @@ const Channel2 = () => {
       let sendData = { page: page }
       const result = await apiGetChannel2Products(sendData)
 
-      console.log('result=' + JSON.stringify(result))
-      setData(result.data) // 更新狀態
+      //console.log('result=' + JSON.stringify(result))
+      setData(result.result.data) // 更新狀態
       // 根據返回的資料更新總頁數，假設後端有提供 totalCount 或者有其他方式獲取總數
-      setTotalPages(Math.ceil(result.total / PageSize))
+      setTotalPages(Math.ceil(result.result.total / PageSize))
     } catch (error) {
       console.error('Error fetching data:', error)
     }
