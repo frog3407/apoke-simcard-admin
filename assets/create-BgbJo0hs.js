@@ -1,1 +1,0 @@
-import{j as r}from"./index-Cfa3plor.js";import{C as e}from"./CCard-DCv4scMT.js";import{C as a}from"./CCardHeader-CHCEmHVX.js";const o=()=>r.jsx(r.Fragment,{children:r.jsx(e,{className:"mb-4",children:r.jsx(a,{children:"建立訂單"})})});export{o as default};
