@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -19,6 +19,7 @@ import { apiLogin, setAuthToken } from '../../../utils/Api'
 const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
   const fetchLogin = async () => {
     try {
       let sendData = { username: username, password: password }
@@ -26,7 +27,7 @@ const Login = () => {
       console.log('result=' + JSON.stringify(result))
       if (result.code === '0000') {
         setAuthToken(result.result.token)
-        window.location.href = '/dashboard'
+        navigate('/dashboard')
       } else {
         alert(result.message)
       }
