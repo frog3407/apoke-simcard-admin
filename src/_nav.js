@@ -9,9 +9,9 @@ import {
   cilDrop,
   cilNotes,
   cilPencil,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
+  cilGroup,
+  cilGift,
+  cilUser,
   cilCart,
   cilWallet,
 } from '@coreui/icons'
@@ -48,7 +48,7 @@ const _nav = [
     component: CNavGroup,
     name: '產品管理',
     to: '/product/channel1',
-    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -66,7 +66,7 @@ const _nav = [
     component: CNavGroup,
     name: '經銷商管理',
     to: '/admin/user/create',
-    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -321,33 +321,33 @@ const _nav = [
   //   component: CNavTitle,
   //   name: 'Extras',
   // },
-  {
-    component: CNavGroup,
-    name: 'Pages',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Login',
-        to: '/login',
-      },
-      {
-        component: CNavItem,
-        name: 'Register',
-        to: '/register',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 404',
-        to: '/404',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 500',
-        to: '/500',
-      },
-    ],
-  },
+  // {
+  //   component: CNavGroup,
+  //   name: 'Pages',
+  //   icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+  //   items: [
+  //     {
+  //       component: CNavItem,
+  //       name: 'Login',
+  //       to: '/login',
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: 'Register',
+  //       to: '/register',
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: 'Error 404',
+  //       to: '/404',
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: 'Error 500',
+  //       to: '/500',
+  //     },
+  //   ],
+  // },
   // {
   //   component: CNavItem,
   //   name: 'Docs',
