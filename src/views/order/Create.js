@@ -22,10 +22,17 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilTrash, cilXCircle } from '@coreui/icons'
+import ChannelProducts from '../../components/ChannelProducts'
 
 const Create = () => {
   const [validated, setValidated] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [selectedChannel, setselectedChannel] = useState(import.meta.env.VITE_PRODUCT_CHANNEL1)
+  const handleChange = (event) => {
+    setselectedChannel(event.target.value)
+    console.log('handleChange value=' + event.target.value)
+  }
+
   const handleSubmit = (event) => {
     const form = event.currentTarget
     if (form.checkValidity() === false) {
@@ -66,12 +73,23 @@ const Create = () => {
         <CFormCheck
           inline
           type="radio"
+          value={import.meta.env.VITE_PRODUCT_CHANNEL1}
           name="channelType"
           id="fchannelType1"
           label="渠道1"
-          defaultChecked
+          checked={selectedChannel === import.meta.env.VITE_PRODUCT_CHANNEL1}
+          onChange={handleChange}
         />
-        <CFormCheck inline type="radio" name="channelType" id="fchannelType2" label="渠道2" />
+        <CFormCheck
+          inline
+          type="radio"
+          value={import.meta.env.VITE_PRODUCT_CHANNEL2}
+          name="channelType"
+          id="fchannelType2"
+          label="渠道2"
+          checked={selectedChannel === import.meta.env.VITE_PRODUCT_CHANNEL2}
+          onChange={handleChange}
+        />
       </CCol>
       <CCol md={12}>
         <CFormLabel htmlFor="validationDefault05">
@@ -142,46 +160,7 @@ const Create = () => {
           <CModalTitle id="ScrollingLongContentExampleLabel">商品列表</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          <CTable>
-            <CTableHead color="light">
-              <CTableRow>
-                <CTableHeaderCell scope="col" className="text-nowrap"></CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-nowrap">
-                  商品名稱
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-nowrap">
-                  單價
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-nowrap">
-                  使用地
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-nowrap">
-                  套餐內容
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-nowrap">
-                  備註
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-nowrap">
-                  激活方式
-                </CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              <CTableRow>
-                <CTableHeaderCell scope="row">
-                  <CFormCheck id="productCheckbox1" value="1" />
-                </CTableHeaderCell>
-                <CTableHeaderCell>eSIM-JOY-多地区TT（ 500MB/天）-01天</CTableHeaderCell>
-                <CTableDataCell>8</CTableDataCell>
-                <CTableDataCell>
-                  12个目的地：韩国、新加坡、马来西亚、泰国、菲律宾、印尼、中国、香港、澳门、台湾、澳大利亚、新西兰{' '}
-                </CTableDataCell>
-                <CTableDataCell>每天500MB后降速128kbps</CTableDataCell>
-                <CTableDataCell>tiktok、chatgpt等APP无限制</CTableDataCell>
-                <CTableDataCell>插卡自动激活</CTableDataCell>
-              </CTableRow>
-            </CTableBody>
-          </CTable>
+          <ChannelProducts channelName={selectedChannel} isSelect={true}></ChannelProducts>
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisible(false)}>
