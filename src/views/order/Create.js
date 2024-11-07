@@ -25,9 +25,25 @@ import { cilTrash, cilXCircle } from '@coreui/icons'
 import ChannelProducts from '../../components/ChannelProducts'
 
 const Create = () => {
+  const [selectedItems, setSelectedItems] = useState('')
+  const [cartItems, setCartItems] = useState([])
   const [validated, setValidated] = useState(false)
   const [visible, setVisible] = useState(false)
   const [selectedChannel, setselectedChannel] = useState(import.meta.env.VITE_PRODUCT_CHANNEL1)
+
+  //從ChannelProducts選擇的商品
+  const handleSelectedItems = (value) => {
+    console.log('handleSelectedItems value=' + JSON.stringify(value))
+    setSelectedItems(value)
+  }
+  //將選擇的商品傳入表單中
+  const handelSendItems = () => {
+    let cartSelectedValue = selectedItems
+    setCartItems(cartSelectedValue)
+    setVisible(false)
+    console.log('handelSendItems value=' + selectedItems)
+  }
+
   const handleChange = (event) => {
     setselectedChannel(event.target.value)
     console.log('handleChange value=' + event.target.value)
@@ -101,7 +117,7 @@ const Create = () => {
       </CCol>
       <CCol md={12}>
         <CTable>
-          <CTableHead color="light">
+          <CTableHead color="secondary">
             <CTableRow>
               <CTableHeaderCell scope="col" className="text-nowrap">
                 商品名稱
@@ -110,13 +126,13 @@ const Create = () => {
                 單價
               </CTableHeaderCell>
               <CTableHeaderCell scope="col" className="text-nowrap">
+                激活日期
+              </CTableHeaderCell>
+              <CTableHeaderCell scope="col" className="text-nowrap">
                 數量
               </CTableHeaderCell>
               <CTableHeaderCell scope="col" className="text-nowrap">
                 總價
-              </CTableHeaderCell>
-              <CTableHeaderCell scope="col" className="text-nowrap">
-                激活日期
               </CTableHeaderCell>
               <CTableHeaderCell scope="col" className="text-nowrap">
                 操作
@@ -124,18 +140,20 @@ const Create = () => {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            <CTableRow>
-              <CTableHeaderCell scope="row">eSIM-JOY-多地区TT（ 500MB/天）-01天</CTableHeaderCell>
-              <CTableDataCell>8</CTableDataCell>
-              <CTableDataCell>1</CTableDataCell>
-              <CTableDataCell>8</CTableDataCell>
-              <CTableDataCell></CTableDataCell>
-              <CTableDataCell>
-                <CButton color="danger" size="sm">
-                  <CIcon icon={cilTrash} size="sm" />
-                </CButton>
-              </CTableDataCell>
-            </CTableRow>
+            {cartItems.map((row, index) => (
+              <CTableRow key={index} id={row['itemCode']}>
+                <CTableDataCell>{row['itemName']}</CTableDataCell>
+                <CTableDataCell>{row['itemPrice']}</CTableDataCell>
+                <CTableDataCell>{row['itemDate']}</CTableDataCell>
+                <CTableDataCell>1</CTableDataCell>
+                <CTableDataCell>{row['itemPrice'] * 1}</CTableDataCell>
+                <CTableDataCell>
+                  <CButton color="danger" size="sm">
+                    <CIcon icon={cilTrash} size="sm" />
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+            ))}
           </CTableBody>
         </CTable>
       </CCol>
@@ -160,13 +178,20 @@ const Create = () => {
           <CModalTitle id="ScrollingLongContentExampleLabel">商品列表</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          <ChannelProducts channelName={selectedChannel} isSelect={true}></ChannelProducts>
+          <ChannelProducts
+            channelName={selectedChannel}
+            isSelect={true}
+            onSelectedItem={handleSelectedItems}
+            cartItems={cartItems}
+          ></ChannelProducts>
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setVisible(false)}>
-            Close
+            取消
           </CButton>
-          <CButton color="primary">Save changes</CButton>
+          <CButton color="primary" onClick={handelSendItems}>
+            確認
+          </CButton>
         </CModalFooter>
       </CModal>
     </CForm>
