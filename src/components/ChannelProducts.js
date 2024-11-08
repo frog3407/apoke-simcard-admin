@@ -66,7 +66,7 @@ const ChannelProducts = (props) => {
     setIsLoading(true)
     if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
       //透過excel檔案的到產品資料
-      fetch('./joytel-products.xlsx')
+      fetch('./joytel-products-esim.xlsx')
         .then((response) => response.arrayBuffer()) // 將檔案讀取為 ArrayBuffer
         .then((buffer) => {
           const workbook = XLSX.read(buffer, { type: 'array' })
