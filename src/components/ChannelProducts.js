@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import {
   CCol,
-  CRow,
+  CSpinner,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -16,26 +16,35 @@ import * as XLSX from 'xlsx'
 import PropTypes from 'prop-types'
 import { apiGetChannel2Products } from '../utils/Api'
 const pageSize = 10 // 每次請求的資料數量
+/*
+ChannelProducts組件參數說明：
+channelName:指定的渠道
+isSelect:是否需要顯示checkbox
+onSelectedItem:回傳給父元件選擇的商品
+cartItems:父元件確定加入購物車的商品，要依據這個將checkbox變成已勾選
+*/
 const ChannelProducts = (props) => {
   const { channelName, isSelect = false, onSelectedItem = {}, cartItems } = props
-  const [checkedItems, setCheckedItems] = useState({})
-  const [allselectedItems, setAllselectedItems] = useState([])
-  const [fullData, setFullData] = useState([])
+  const [checkeBoxValue, setCheckeBoxValue] = useState({}) //checkbox勾選的狀態資料
+  const [allselectedItems, setAllselectedItems] = useState([]) //已勾選的商品
+  const [fullData, setFullData] = useState([]) //excel讀檔方式才會使用到
   const [displayData, setDisplayData] = useState([]) // 當前頁顯示的資料
   const [currentPage, setCurrentPage] = useState(1) // 當前頁碼
   const [itemsPerPage] = useState(pageSize) // 每頁顯示的資料數量
   const [totalPages, setTotalPages] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
     console.log('cartItems=' + JSON.stringify(cartItems))
     let initSelectedItemArray = []
     if (isSelect) {
       cartItems.forEach((item) => {
-        checkedItems[item.itemCode] = true // 將符合條件的項目 ID 設置為 true
+        checkeBoxValue[item.itemCode] = true // 將符合條件的項目 ID 設置為 true
         const newItem = {
           itemCode: item.itemCode,
           itemName: item.itemName,
           itemPrice: item.itemPrice,
           itemDate: item.itemDate,
+          itemQuantity: item.itemQuantity,
         }
         initSelectedItemArray.push(newItem)
       })
@@ -54,6 +63,7 @@ const ChannelProducts = (props) => {
   }, [currentPage, itemsPerPage, fullData])
 
   const fetchData = async (page) => {
+    setIsLoading(true)
     if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
       //透過excel檔案的到產品資料
       fetch('./joytel-products.xlsx')
@@ -67,6 +77,7 @@ const ChannelProducts = (props) => {
           setFullData(jsonData) // 加載所有資料
           setDisplayData(jsonData.slice(0, itemsPerPage)) // 設定第一頁的顯示資料
           setTotalPages(Math.ceil(jsonData.length / pageSize)) //總頁數
+          setIsLoading(false)
         })
         .catch((error) => console.error('Error reading Excel file:', error))
     } else if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
@@ -81,6 +92,8 @@ const ChannelProducts = (props) => {
         setTotalPages(Math.ceil(result.result.total / pageSize))
       } catch (error) {
         console.error('Error fetching data:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
   }
@@ -195,11 +208,11 @@ const ChannelProducts = (props) => {
 
   const handleSelectedItem = (event, itemCode, itemName, itemPrice, itemDate) => {
     let getChecked = event.target.checked
-    setCheckedItems((prev) => ({
+    setCheckeBoxValue((prev) => ({
       ...prev,
       [itemCode]: event.target.checked,
     }))
-    console.log('handleSelectedItem checkedItems=' + JSON.stringify(checkedItems))
+    console.log('handleSelectedItem checkeBoxValue=' + JSON.stringify(checkeBoxValue))
     let newSelectedItemArray = allselectedItems
     if (getChecked) {
       const newItem = {
@@ -207,6 +220,7 @@ const ChannelProducts = (props) => {
         itemName: itemName,
         itemPrice: itemPrice,
         itemDate: itemDate,
+        itemQuantity: 1,
       }
       newSelectedItemArray.push(newItem)
     } else {
@@ -223,65 +237,95 @@ const ChannelProducts = (props) => {
 
   return (
     <CCol>
-      <CTable className="table-hover fs-6">
-        <CTableHead color="secondary">
-          <CTableRow>
-            {isSelect ? (
-              <CTableHeaderCell
-                scope="col"
-                className="text-nowrap"
-                style={{ width: '2%' }}
-              ></CTableHeaderCell>
-            ) : (
-              ''
-            )}
-            {displayOrder
-              .filter((key) => !excludedKeys.includes(key)) // 排除欄位
-              .map((key) => (
+      {isLoading ? (
+        <CSpinner className="m-2" color="secondary" />
+      ) : (
+        <CTable className="table-hover fs-6">
+          <CTableHead color="secondary">
+            <CTableRow>
+              {isSelect ? (
                 <CTableHeaderCell
                   scope="col"
                   className="text-nowrap"
-                  style={getCellStyle(key)}
-                  key={key}
-                >
-                  {keyMapping[key]}
-                </CTableHeaderCell>
-              ))}
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
-          {displayData.map((row, index) => (
-            <CTableRow key={index}>
-              {isSelect ? (
-                <CTableDataCell>
-                  <CFormCheck
-                    value={row['商品编码']}
-                    checked={checkedItems[row['商品编码']] || false}
-                    onChange={(e) =>
-                      handleSelectedItem(
-                        e,
-                        row['商品编码'],
-                        row['商品名称'],
-                        row['单价(元)'],
-                        row['最晚使用日期'],
-                      )
-                    }
-                  />
-                </CTableDataCell>
+                  style={{ width: '2%' }}
+                ></CTableHeaderCell>
               ) : (
                 ''
               )}
               {displayOrder
-                .filter(([key]) => !excludedKeys.includes(key)) // 排除欄位
+                .filter((key) => !excludedKeys.includes(key)) // 排除欄位
                 .map((key) => (
-                  <CTableDataCell key={key} style={getCellStyle(key)}>
-                    {row[key]}
-                  </CTableDataCell>
+                  <CTableHeaderCell
+                    scope="col"
+                    className="text-nowrap"
+                    style={getCellStyle(key)}
+                    key={key}
+                  >
+                    {keyMapping[key]}
+                  </CTableHeaderCell>
                 ))}
             </CTableRow>
-          ))}
-        </CTableBody>
-      </CTable>
+          </CTableHead>
+          <CTableBody>
+            {displayData.map((row, index) => (
+              <CTableRow key={index}>
+                {isSelect ? (
+                  <CTableDataCell>
+                    {(() => {
+                      switch (channelName) {
+                        case import.meta.env.VITE_PRODUCT_CHANNEL1:
+                          return (
+                            <CFormCheck
+                              value={row['商品编码']}
+                              checked={checkeBoxValue[row['商品编码']] || false}
+                              onChange={(e) =>
+                                handleSelectedItem(
+                                  e,
+                                  row['商品编码'],
+                                  row['商品名称'],
+                                  row['单价(元)'],
+                                  row['最晚使用日期'],
+                                )
+                              }
+                            />
+                          )
+                        case import.meta.env.VITE_PRODUCT_CHANNEL2:
+                          return (
+                            <CFormCheck
+                              value={row['productCode']}
+                              checked={checkeBoxValue[row['productCode']] || false}
+                              onChange={(e) =>
+                                handleSelectedItem(
+                                  e,
+                                  row['productCode'],
+                                  row['productName'],
+                                  row['settlementPrice'],
+                                  row['validityPeriod'],
+                                )
+                              }
+                            />
+                          )
+                        default:
+                          return null
+                      }
+                    })()}
+                  </CTableDataCell>
+                ) : (
+                  ''
+                )}
+
+                {displayOrder
+                  .filter(([key]) => !excludedKeys.includes(key)) // 排除欄位
+                  .map((key) => (
+                    <CTableDataCell key={key} style={getCellStyle(key)}>
+                      {row[key]}
+                    </CTableDataCell>
+                  ))}
+              </CTableRow>
+            ))}
+          </CTableBody>
+        </CTable>
+      )}
       <CPagination aria-label="Page navigation example">
         <CPaginationItem aria-label="Previous" onClick={handlePreviousPage}>
           <span aria-hidden="true">&laquo;</span>

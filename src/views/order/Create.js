@@ -32,23 +32,53 @@ const Create = () => {
   const [selectedChannel, setselectedChannel] = useState(import.meta.env.VITE_PRODUCT_CHANNEL1)
 
   //從ChannelProducts選擇的商品
-  const handleSelectedItems = (value) => {
-    console.log('handleSelectedItems value=' + JSON.stringify(value))
+  const handleGetSelectedItems = (value) => {
+    console.log('handleGetSelectedItems value=' + JSON.stringify(value))
     setSelectedItems(value)
   }
-  //將選擇的商品傳入表單中
-  const handelSendItems = () => {
+  const handleSelectChannel = (event) => {
+    setselectedChannel(event.target.value)
+    //清空購物車
+    setCartItems([])
+    console.log('handleSelectChannel value=' + event.target.value)
+  }
+
+  //將選擇的商品加入購物車中中
+  const handelAddItemsToCart = () => {
     let cartSelectedValue = selectedItems
     setCartItems(cartSelectedValue)
     setVisible(false)
     console.log('handelSendItems value=' + selectedItems)
   }
-
-  const handleChange = (event) => {
-    setselectedChannel(event.target.value)
-    console.log('handleChange value=' + event.target.value)
+  //
+  const handelDelCartItem = (event, itemCode) => {
+    console.log('handelDelCartItem itemCode=' + itemCode)
+    let newCartItems = cartItems
+    newCartItems = newCartItems.reduce((acc, item) => {
+      if (item.itemCode !== itemCode) {
+        acc.push(item) // 只有不匹配的項目才加入新陣列
+      }
+      return acc
+    }, [])
+    setCartItems(newCartItems)
   }
 
+  // 更新商品数量并重新计算价格
+  const updateQuantity = (id, newQuantity) => {
+    if (newQuantity < 1) return // 不能小於1
+
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.itemCode === id ? { ...item, itemQuantity: newQuantity } : item,
+      ),
+    )
+  }
+  // 计算每个商品的总价
+  const getItemTotalPrice = (item) => item.itemPrice * item.itemQuantity
+  // 计算所有商品的总价
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + getItemTotalPrice(item), 0)
+  }
   const handleSubmit = (event) => {
     const form = event.currentTarget
     if (form.checkValidity() === false) {
@@ -79,13 +109,13 @@ const Create = () => {
         <CFormInput type="text" id="cellphone" defaultValue="" required />
         <CFormFeedback invalid>請輸入聯絡電話</CFormFeedback>
       </CCol>
-      <CCol md={12}>
-        <CFormLabel htmlFor="validationDefault05">備註</CFormLabel>
-        <CFormInput type="text" id="validationDefault05" />
-        <CFormFeedback invalid>請輸入聯絡電話</CFormFeedback>
+      <CCol md={12} className="position-relative">
+        <CFormLabel htmlFor="note">備註</CFormLabel>
+        <CFormInput type="text" id="note" defaultValue="" />
+        <CFormFeedback invalid>請輸入備註</CFormFeedback>
       </CCol>
-      <CCol md={12}>
-        <CFormLabel htmlFor="validationDefault05">渠道類型&nbsp;&nbsp;&nbsp;&nbsp;</CFormLabel>
+      <CCol md={12} className="position-relative">
+        <CFormLabel htmlFor="channelType">渠道類型&nbsp;&nbsp;&nbsp;&nbsp;</CFormLabel>
         <CFormCheck
           inline
           type="radio"
@@ -94,7 +124,7 @@ const Create = () => {
           id="fchannelType1"
           label="渠道1"
           checked={selectedChannel === import.meta.env.VITE_PRODUCT_CHANNEL1}
-          onChange={handleChange}
+          onChange={handleSelectChannel}
         />
         <CFormCheck
           inline
@@ -104,7 +134,7 @@ const Create = () => {
           id="fchannelType2"
           label="渠道2"
           checked={selectedChannel === import.meta.env.VITE_PRODUCT_CHANNEL2}
-          onChange={handleChange}
+          onChange={handleSelectChannel}
         />
       </CCol>
       <CCol md={12}>
@@ -145,10 +175,23 @@ const Create = () => {
                 <CTableDataCell>{row['itemName']}</CTableDataCell>
                 <CTableDataCell>{row['itemPrice']}</CTableDataCell>
                 <CTableDataCell>{row['itemDate']}</CTableDataCell>
-                <CTableDataCell>1</CTableDataCell>
-                <CTableDataCell>{row['itemPrice'] * 1}</CTableDataCell>
                 <CTableDataCell>
-                  <CButton color="danger" size="sm">
+                  <CFormInput
+                    type="number"
+                    size="sm"
+                    max={10}
+                    min={1}
+                    value={row['itemQuantity']}
+                    onChange={(e) => updateQuantity(row['itemCode'], parseInt(e.target.value, 10))}
+                  />
+                </CTableDataCell>
+                <CTableDataCell>{getItemTotalPrice(row).toFixed(2)}</CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="danger"
+                    size="sm"
+                    onClick={(e) => handelDelCartItem(e, row['itemCode'])}
+                  >
                     <CIcon icon={cilTrash} size="sm" />
                   </CButton>
                 </CTableDataCell>
@@ -158,9 +201,8 @@ const Create = () => {
         </CTable>
       </CCol>
       <CRow className="my-2 text-end">
-        <CCol>商品總價：8元</CCol>
-        <CCol>商品數量：1</CCol>
-        <CCol>應結算金額：8元</CCol>
+        <CCol>商品總價：{getTotalPrice().toFixed(2)}元</CCol>
+        <CCol>應結算金額：{getTotalPrice().toFixed(2)}元</CCol>
       </CRow>
       <CCol xs={12} className="mb-5">
         <CButton color="primary" type="submit" className="float-end">
@@ -181,7 +223,7 @@ const Create = () => {
           <ChannelProducts
             channelName={selectedChannel}
             isSelect={true}
-            onSelectedItem={handleSelectedItems}
+            onSelectedItem={handleGetSelectedItems}
             cartItems={cartItems}
           ></ChannelProducts>
         </CModalBody>
@@ -189,7 +231,7 @@ const Create = () => {
           <CButton color="secondary" onClick={() => setVisible(false)}>
             取消
           </CButton>
-          <CButton color="primary" onClick={handelSendItems}>
+          <CButton color="primary" onClick={handelAddItemsToCart}>
             確認
           </CButton>
         </CModalFooter>
