@@ -50,7 +50,7 @@ const handleResponse = async (response, isContinue, download) => {
   //   if (response.data.code === '1001') {
   //     removeAuthToken()
   //   }
-  console.log('handleResponse=' + response)
+  //console.log('handleResponse=' + response)
   return download ? response : response.data
 }
 

@@ -33,10 +33,11 @@ const ChannelProducts = (props) => {
   const [itemsPerPage] = useState(pageSize) // 每頁顯示的資料數量
   const [totalPages, setTotalPages] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [hasMore, setHasMore] = useState(true) // 是否有更多資料
   useEffect(() => {
-    console.log('cartItems=' + JSON.stringify(cartItems))
     let initSelectedItemArray = []
     if (isSelect) {
+      console.log('cartItems=' + JSON.stringify(cartItems))
       cartItems.forEach((item) => {
         checkeBoxValue[item.itemCode] = true // 將符合條件的項目 ID 設置為 true
         const newItem = {
@@ -50,16 +51,16 @@ const ChannelProducts = (props) => {
       })
       setAllselectedItems(initSelectedItemArray)
     }
-
-    fetchData(currentPage)
+    console.log('hasMore=' + hasMore)
+    if (hasMore) {
+      fetchData(currentPage)
+    }
   }, [currentPage])
   // 切換頁面時更新顯示資料
   useEffect(() => {
     const start = (currentPage - 1) * itemsPerPage
     const end = start + itemsPerPage
-    if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
-      setDisplayData(fullData.slice(start, end))
-    }
+    setDisplayData(fullData.slice(start, end))
   }, [currentPage, itemsPerPage, fullData])
 
   const fetchData = async (page) => {
@@ -73,31 +74,44 @@ const ChannelProducts = (props) => {
           const sheetName = workbook.SheetNames[0] // 讀取第一個工作表
           const worksheet = workbook.Sheets[sheetName]
           const jsonData = XLSX.utils.sheet_to_json(worksheet) // 轉換為 JSON 格式
-          //console.log('jsonData=' + JSON.stringify(jsonData))
+          console.log('jsonData=' + JSON.stringify(jsonData))
           setFullData(jsonData) // 加載所有資料
           setDisplayData(jsonData.slice(0, itemsPerPage)) // 設定第一頁的顯示資料
           setTotalPages(Math.ceil(jsonData.length / pageSize)) //總頁數
           setIsLoading(false)
+          setHasMore(false)
         })
         .catch((error) => console.error('Error reading Excel file:', error))
     } else if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
       try {
         //透過API取得產品資料
-        let sendData = { page: page }
+        let sendData = { page: page, producttype: 'MONTH' }
         const result = await apiGetChannel2Products(sendData)
 
-        //console.log('result=' + JSON.stringify(result))
-        setDisplayData(result.result.data) // 更新狀態
-        // 根據返回的資料更新總頁數，假設後端有提供 totalCount 或者有其他方式獲取總數
-        setTotalPages(Math.ceil(result.result.total / pageSize))
+        console.log('result=' + JSON.stringify(result))
+        if (page == 1) {
+          // 根據返回的資料更新總頁數
+          setTotalPages(Math.ceil(result.result.total / pageSize))
+          setDisplayData(result.result.data.slice(0, itemsPerPage)) // 設定第一頁的顯示資料
+        }
+        console.log('totalPages=' + totalPages)
+        console.log('page=' + page)
+        if (result.result.data.length > 0) {
+          setFullData((prevData) => [...prevData, ...result.result.data]) // 追加新資料
+          let loadPage = page + 1
+          console.log('loadPage=' + loadPage)
+          fetchData(loadPage)
+        } else {
+          setHasMore(false)
+          setIsLoading(false)
+        }
+        //setDisplayData(result.result.data) // 更新狀態
       } catch (error) {
-        console.error('Error fetching data:', error)
-      } finally {
         setIsLoading(false)
+        console.error('Error fetching data:', error)
       }
     }
   }
-
   const displayOrder =
     channelName === import.meta.env.VITE_PRODUCT_CHANNEL1
       ? [
