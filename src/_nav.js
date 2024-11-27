@@ -64,6 +64,11 @@ const _nav = [
         name: '經銷商列表',
         to: '/admin/user/list',
       },
+      {
+        component: CNavItem,
+        name: '經銷商分級設定',
+        to: '/admin/dealer/level',
+      },
     ],
   },
 ]

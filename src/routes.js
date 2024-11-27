@@ -9,6 +9,7 @@ const UserCreate = React.lazy(() => import('./views/admin/user/Create'))
 const UserList = React.lazy(() => import('./views/admin/user/List'))
 const Product1 = React.lazy(() => import('./views/product/Channel1'))
 const Product2 = React.lazy(() => import('./views/product/Channel2'))
+const LevelManage = React.lazy(() => import('./views/admin/dealer/LevelManage'))
 
 //首頁
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
@@ -22,6 +23,7 @@ const routes = [
   { path: '/product/channel2', name: '渠道2', element: Product2 },
   { path: '/admin/user/create', name: '建立經銷商', element: UserCreate },
   { path: '/admin/user/list', name: '經銷商列表', element: UserList },
+  { path: '/admin/dealer/level', name: '經銷商分級設定', element: LevelManage },
 ]
 
 export default routes
