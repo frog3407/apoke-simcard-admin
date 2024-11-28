@@ -324,12 +324,14 @@ const List = () => {
                           )}
                         </CTableDataCell>
                         <CTableDataCell>
-                          <CButton color="info" size="sm" variant="outline" className="me-2">
-                            <CIcon
-                              icon={cilPencil}
-                              size="sm"
-                              onClick={() => handleEditClick(row)}
-                            />
+                          <CButton
+                            color="info"
+                            size="sm"
+                            variant="outline"
+                            className="me-2"
+                            onClick={() => handleEditClick(row)}
+                          >
+                            <CIcon icon={cilPencil} size="sm" />
                           </CButton>
                         </CTableDataCell>
                       </>
