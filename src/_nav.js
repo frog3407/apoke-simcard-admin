@@ -17,46 +17,34 @@ const _nav = [
       },
     ],
   },
+
   {
     component: CNavGroup,
-    name: '儲值管理',
-    to: '/recharge/list',
-    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: '儲值紀錄',
-        to: '/recharge/list',
-      },
-    ],
-  },
-  {
-    component: CNavGroup,
-    name: '產品管理',
-    to: '/product/channel1',
+    name: '產品管理(admin)',
+    to: '/admin/product/channel1',
     icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: '渠道1',
-        to: '/product/channel1',
+        to: '/admin/product/channel1',
       },
       {
         component: CNavItem,
         name: '渠道2',
-        to: '/product/channel2',
+        to: '/admin/product/channel2',
       },
     ],
   },
   {
     component: CNavGroup,
-    name: '經銷商管理',
+    name: '經銷商管理(admin)',
     to: '/admin/user/create',
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: '新增經銷商',
+        name: '建立經銷商',
         to: '/admin/user/create',
       },
       {
@@ -68,6 +56,19 @@ const _nav = [
         component: CNavItem,
         name: '經銷商分級設定',
         to: '/admin/dealer/level',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: '儲值管理(admin)',
+    to: '/admin/recharge/list',
+    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: '儲值紀錄',
+        to: '/admin/recharge/list',
       },
     ],
   },

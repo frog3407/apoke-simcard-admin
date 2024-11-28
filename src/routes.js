@@ -7,10 +7,11 @@ const RechargeList = React.lazy(() => import('./views/recharge/List'))
 //給內部管理用的
 const UserCreate = React.lazy(() => import('./views/admin/user/Create'))
 const UserList = React.lazy(() => import('./views/admin/user/List'))
+const UserDetail = React.lazy(() => import('./views/admin/user/Detail'))
 const Product1 = React.lazy(() => import('./views/product/Channel1'))
 const Product2 = React.lazy(() => import('./views/product/Channel2'))
 const LevelManage = React.lazy(() => import('./views/admin/dealer/LevelManage'))
-
+const AdminRechargeList = React.lazy(() => import('./views/admin/recharge/List'))
 //首頁
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
@@ -18,11 +19,12 @@ const routes = [
   { path: '/', exact: true, name: '首頁' },
   { path: '/dashboard', name: '主頁', element: Dashboard },
   { path: '/order/create', name: '建立訂單', element: OrderCreate },
-  { path: '/recharge/list', name: '儲值紀錄', element: RechargeList },
-  { path: '/product/channel1', name: '渠道1', element: Product1 },
-  { path: '/product/channel2', name: '渠道2', element: Product2 },
+  { path: '/admin/recharge/list', name: '儲值紀錄', element: AdminRechargeList },
+  { path: '/admin/product/channel1', name: '渠道1', element: Product1 },
+  { path: '/admin/product/channel2', name: '渠道2', element: Product2 },
   { path: '/admin/user/create', name: '建立經銷商', element: UserCreate },
   { path: '/admin/user/list', name: '經銷商列表', element: UserList },
+  { path: '/admin/user/detail/:id', name: '經銷商詳細資料', element: UserDetail }, //這邊的path有改要改AppBreadcrumb.js裡面的邏輯
   { path: '/admin/dealer/level', name: '經銷商分級設定', element: LevelManage },
 ]
 

@@ -14,18 +14,44 @@ const AppBreadcrumb = () => {
   }
 
   const getBreadcrumbs = (location) => {
+    // console.log('location=' + location)
+    // console.log('location check=' + location.includes('/admin/user/detail/'))
+    // console.log('location paths=' + JSON.stringify(paths))
+
     const breadcrumbs = []
-    location.split('/').reduce((prev, curr, index, array) => {
-      const currentPathname = `${prev}/${curr}`
-      const routeName = getRouteName(currentPathname, routes)
-      routeName &&
-        breadcrumbs.push({
-          pathname: currentPathname,
-          name: routeName,
-          active: index + 1 === array.length ? true : false,
-        })
-      return currentPathname
-    })
+    if (location.includes('/admin/user/detail/')) {
+      //經銷商詳細資料的Breadcrumbs
+      const searchPathname = '/admin/user/list'
+      breadcrumbs.push({
+        pathname: searchPathname,
+        name: getRouteName(searchPathname, routes),
+        active: false,
+      })
+
+      breadcrumbs.push({
+        pathname: location,
+        name: getRouteName('/admin/user/detail/:id', routes),
+        active: true,
+      })
+    } else {
+      location.split('/').reduce((prev, curr, index, array) => {
+        const currentPathname = `${prev}/${curr}`
+        const routeName = getRouteName(currentPathname, routes)
+        // console.log(index + '-currentPathname=' + currentPathname)
+        // console.log(index + '-routes=' + routes)
+        // console.log(index + '-routeName=' + routeName)
+
+        routeName &&
+          breadcrumbs.push({
+            pathname: currentPathname,
+            name: routeName,
+            active: index + 1 === array.length ? true : false,
+          })
+        return currentPathname
+      })
+      // console.log('-breadcrumbs=' + JSON.stringify(breadcrumbs))
+    }
+
     return breadcrumbs
   }
 
