@@ -1,12 +1,5 @@
 import React, { Suspense, useEffect } from 'react'
-import {
-  unstable_HistoryRouter as Router,
-  BrowserRouter,
-  HashRouter,
-  Route,
-  Routes,
-} from 'react-router-dom'
-import { createBrowserHistory } from 'history'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
@@ -40,7 +33,7 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Router history={createBrowserHistory()}>
+    <BrowserRouter>
       <Suspense
         fallback={
           <div className="pt-3 text-center">
@@ -56,7 +49,7 @@ const App = () => {
           <Route path="*" name="首頁" element={<DefaultLayout />} />
         </Routes>
       </Suspense>
-    </Router>
+    </BrowserRouter>
   )
 }
 
