@@ -33,7 +33,7 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.VITE_BASENAME}>
       <Suspense
         fallback={
           <div className="pt-3 text-center">
