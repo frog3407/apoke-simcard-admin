@@ -11,15 +11,18 @@ import {
   CPagination,
   CPaginationItem,
   CFormCheck,
+  CFormInput,
+  CButton,
 } from '@coreui/react'
 import * as XLSX from 'xlsx'
 import PropTypes from 'prop-types'
 import { apiGetChannel2Products } from '../utils/Api'
+
 const pageSize = 10 // 每次請求的資料數量
 /*
 ChannelProducts組件參數說明：
 channelName:指定的渠道
-isSelect:是否需要顯示checkbox
+isSelect:是否需要顯示checkbox (代表是建立訂單的頁面)
 onSelectedItem:回傳給父元件選擇的商品
 cartItems:父元件確定加入購物車的商品，要依據這個將checkbox變成已勾選
 */
@@ -27,13 +30,15 @@ const ChannelProducts = (props) => {
   const { channelName, isSelect = false, onSelectedItem = {}, cartItems } = props
   const [checkeBoxValue, setCheckeBoxValue] = useState({}) //checkbox勾選的狀態資料
   const [allselectedItems, setAllselectedItems] = useState([]) //已勾選的商品
-  const [fullData, setFullData] = useState([]) //excel讀檔方式才會使用到
-  const [displayData, setDisplayData] = useState([]) // 當前頁顯示的資料
+  const [fullData, setFullData] = useState([]) //所有資料
+  const [filteredData, setFilteredData] = useState([]) // 過濾後的資料
+  const [searchQuery, setSearchQuery] = useState('') // 搜尋條件
   const [currentPage, setCurrentPage] = useState(1) // 當前頁碼
   const [itemsPerPage] = useState(pageSize) // 每頁顯示的資料數量
   const [totalPages, setTotalPages] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true) // 是否有更多資料
+
   useEffect(() => {
     let initSelectedItemArray = []
     if (isSelect) {
@@ -56,18 +61,19 @@ const ChannelProducts = (props) => {
       fetchData(currentPage)
     }
   }, [currentPage])
-  // 切換頁面時更新顯示資料
-  useEffect(() => {
+
+  // 分頁邏輯-切換頁面時更新顯示資料
+  const paginateData = () => {
     const start = (currentPage - 1) * itemsPerPage
     const end = start + itemsPerPage
-    setDisplayData(fullData.slice(start, end))
-  }, [currentPage, itemsPerPage, fullData])
+    return filteredData.slice(start, end)
+  }
 
   const fetchData = async (page) => {
     setIsLoading(true)
     if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
       //透過excel檔案的到產品資料
-      fetch('./joytel-products-esim.xlsx')
+      fetch('/joytel-products-esim.xlsx')
         .then((response) => response.arrayBuffer()) // 將檔案讀取為 ArrayBuffer
         .then((buffer) => {
           const workbook = XLSX.read(buffer, { type: 'array' })
@@ -75,9 +81,24 @@ const ChannelProducts = (props) => {
           const worksheet = workbook.Sheets[sheetName]
           const jsonData = XLSX.utils.sheet_to_json(worksheet) // 轉換為 JSON 格式
           console.log('jsonData=' + JSON.stringify(jsonData))
-          setFullData(jsonData) // 加載所有資料
-          setDisplayData(jsonData.slice(0, itemsPerPage)) // 設定第一頁的顯示資料
-          setTotalPages(Math.ceil(jsonData.length / pageSize)) //總頁數
+
+          const updatedData = jsonData.map((row) => ({
+            ...row, // 保留其他欄位不變
+            商品名称: row.商品名称.replace('-JOY-', ''), // 直接使用 replace 進行替換
+          }))
+          // const updatedData = jsonData.map((row) => {
+          //   // 遍歷每個欄位並進行簡繁體轉換
+          //   const convertedRow = Object.keys(row).reduce((acc, key) => {
+          //     acc[key] = row[key].replace('JOY', '') // 對每個欄位進行轉換
+          //     return acc
+          //   }, {})
+
+          //   return convertedRow
+          // })
+
+          setFullData(updatedData) // 加載所有資料
+          setFilteredData(updatedData) // 初始過濾資料為全量
+          setTotalPages(Math.ceil(updatedData.length / pageSize)) //總頁數
           setIsLoading(false)
           setHasMore(false)
         })
@@ -85,38 +106,44 @@ const ChannelProducts = (props) => {
     } else if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
       try {
         //透過API取得產品資料
-        let sendData = { page: page, producttype: 'MONTH' }
+        let sendData = { page: page, producttype: 'DAILY' }
         const result = await apiGetChannel2Products(sendData)
 
         console.log('result=' + JSON.stringify(result))
         if (page == 1) {
           // 根據返回的資料更新總頁數
           setTotalPages(Math.ceil(result.result.total / pageSize))
-          setDisplayData(result.result.data.slice(0, itemsPerPage)) // 設定第一頁的顯示資料
         }
         console.log('totalPages=' + totalPages)
         console.log('page=' + page)
         if (result.result.data.length > 0) {
           setFullData((prevData) => [...prevData, ...result.result.data]) // 追加新資料
+          setFilteredData((prevData) => [...prevData, ...result.result.data]) // 追加新資料
           let loadPage = page + 1
           console.log('loadPage=' + loadPage)
-          fetchData(loadPage)
+
+          //註解fetchData 暫時先取一次就好
+          //fetchData(loadPage)
+          setHasMore(false) //需拿掉 暫時先取一次就好
+          setIsLoading(false) //需拿掉 暫時先取一次就好
         } else {
           setHasMore(false)
           setIsLoading(false)
         }
-        //setDisplayData(result.result.data) // 更新狀態
       } catch (error) {
         setIsLoading(false)
         console.error('Error fetching data:', error)
       }
     }
   }
+  //要顯示的欄位
   const displayOrder =
-    channelName === import.meta.env.VITE_PRODUCT_CHANNEL1
+    channelName === import.meta.env.VITE_PRODUCT_CHANNEL1 && !isSelect
       ? [
           '商品名称',
           '单价(元)',
+          '商品编码',
+          '商品动态',
           '使用地',
           '商品类型',
           '商品描述',
@@ -124,29 +151,59 @@ const ChannelProducts = (props) => {
           '备注',
           '激活方式',
         ]
-      : channelName === import.meta.env.VITE_PRODUCT_CHANNEL2
-        ? ['productName', 'productType', 'ruleDesc', 'activeType', 'settlementPrice']
-        : ['Null']
+      : channelName === import.meta.env.VITE_PRODUCT_CHANNEL1 && isSelect
+        ? ['商品名称', '单价(元)', '使用地', '商品描述', '最晚使用日期', '备注', '激活方式']
+        : channelName === import.meta.env.VITE_PRODUCT_CHANNEL2 && !isSelect
+          ? [
+              'productName',
+              'settlementPrice',
+              'productCode',
+              'ruleDesc',
+              'mcc',
+              'operatorDesc',
+              'apnDesc',
+              'activeType',
+              'productType',
+              'periodType',
+              'days',
+              'validityPeriod',
+              'dataLimited',
+              'dataTotal',
+              'dataUnit',
+              'lastModifiedTime',
+              'isContract',
+              'minOrderCycle',
+            ]
+          : channelName === import.meta.env.VITE_PRODUCT_CHANNEL2 && isSelect
+            ? [
+                'productName',
+                'settlementPrice',
+                'mcc',
+                'ruleDesc',
+                'validityPeriod',
+                'activeType',
+                'days',
+                'apnDesc',
+              ]
+            : ['Null']
+  //排除的欄位
   const excludedKeys =
-    channelName === import.meta.env.VITE_PRODUCT_CHANNEL1
-      ? ['商品编码', '商品动态']
-      : channelName === import.meta.env.VITE_PRODUCT_CHANNEL2
+    channelName === import.meta.env.VITE_PRODUCT_CHANNEL1 && isSelect
+      ? ['商品编码', '商品动态', '商品类型']
+      : channelName === import.meta.env.VITE_PRODUCT_CHANNEL2 && isSelect
         ? [
             'productCode',
-            'periodType',
-            'days',
-            'apnDesc',
-            'isContract',
-            'validityPeriod',
-            'dataUnit',
-            'mcc',
             'operatorDesc',
-            'dataTotal',
-            'minOrderCycle',
-            'lastModifiedTime',
+            'productType',
+            'periodType',
             'dataLimited',
+            'dataTotal',
+            'dataUnit',
+            'lastModifiedTime',
+            'isContract',
+            'minOrderCycle',
           ]
-        : ['Null']
+        : []
   const getCellStyle = (key) => {
     if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
       switch (key) {
@@ -170,25 +227,41 @@ const ChannelProducts = (props) => {
       }
     }
   }
+  //對應顯示的標題
   const keyMapping =
     channelName === import.meta.env.VITE_PRODUCT_CHANNEL1
       ? {
           商品名称: '商品名稱',
-          '单价(元)': '單價',
-          商品类型: '類型',
-          使用地: '地區',
-          商品描述: '描述',
-          最晚使用日期: '有效日期',
+          '单价(元)': '單價(元)',
+          商品编码: '商品編碼',
+          商品动态: '商品動態',
+          使用地: '使用地區',
+          商品类型: '商品類型',
+          商品描述: '商品方案說明',
+          最晚使用日期: '未開通有效期限',
           备注: '備註',
-          激活方式: '激活方式',
+          激活方式: '開通方式',
         }
       : channelName === import.meta.env.VITE_PRODUCT_CHANNEL2
         ? {
             productName: '商品名稱',
-            settlementPrice: '單價',
-            productType: '類型',
-            ruleDesc: '描述',
-            activeType: '激活方式',
+            settlementPrice: '單價(元)',
+            productCode: '商品編碼',
+            ruleDesc: '商品方案說明',
+            mcc: '使用地區',
+            operatorDesc: '電信商',
+            apnDesc: 'APN',
+            activeType: '開通方式',
+            productType: '商品類型',
+            periodType: '商品計量單位',
+            days: '開通後使用期限',
+            validityPeriod: '未開通有效期限(天)',
+            dataLimited: '流量上限',
+            dataTotal: '流量總量',
+            dataUnit: '流量單位',
+            lastModifiedTime: '最後修改時間',
+            isContract: '合約產品',
+            minOrderCycle: '最小下單數量',
           }
         : {
             Name: 'null',
@@ -249,8 +322,50 @@ const ChannelProducts = (props) => {
     onSelectedItem(newSelectedItemArray)
   }
 
+  // 搜尋邏輯
+  const handleSearch = (query) => {
+    setSearchQuery(query)
+    if (query.trim() === '') {
+      setFilteredData(fullData) // 如果搜尋條件為空，顯示所有資料
+      setTotalPages(Math.ceil(fullData.length / pageSize)) //總頁數
+    } else {
+      const lowerCaseQuery = query.toLowerCase()
+      let filtered = []
+      if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
+        filtered = fullData.filter(
+          (item) =>
+            item.商品名称.toLowerCase().includes(lowerCaseQuery) ||
+            item.使用地.toLowerCase().includes(lowerCaseQuery) ||
+            item.商品描述.toLowerCase().includes(lowerCaseQuery),
+        )
+      } else if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
+        filtered = fullData.filter(
+          (item) =>
+            item.productName.toLowerCase().includes(lowerCaseQuery) ||
+            item.mcc.toLowerCase().includes(lowerCaseQuery) ||
+            item.ruleDesc.toLowerCase().includes(lowerCaseQuery),
+        )
+      }
+
+      console.log('filtered=' + JSON.stringify(filtered))
+      setFilteredData(filtered)
+      setTotalPages(Math.ceil(filtered.length / pageSize)) //總頁數
+      console.log('setTotalPages=' + Math.ceil(filtered.length / pageSize))
+    }
+
+    setCurrentPage(1) // 重置到第一頁
+  }
   return (
-    <CCol>
+    <CCol className="overflow-auto">
+      <CCol md={6} className="mb-3">
+        <CFormInput
+          type="text"
+          value={searchQuery}
+          placeholder="輸入商品名稱、使用地區、商品方案說明來進行搜尋"
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+      </CCol>
+
       {isLoading ? (
         <CSpinner className="m-2" color="secondary" />
       ) : (
@@ -260,7 +375,7 @@ const ChannelProducts = (props) => {
               {isSelect ? (
                 <CTableHeaderCell
                   scope="col"
-                  className="text-nowrap"
+                  // className="text-nowrap"
                   style={{ width: '2%' }}
                 ></CTableHeaderCell>
               ) : (
@@ -281,7 +396,7 @@ const ChannelProducts = (props) => {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {displayData.map((row, index) => (
+            {paginateData().map((row, index) => (
               <CTableRow key={index}>
                 {isSelect ? (
                   <CTableDataCell>
