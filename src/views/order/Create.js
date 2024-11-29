@@ -43,12 +43,12 @@ const Create = () => {
     console.log('handleSelectChannel value=' + event.target.value)
   }
 
-  //將選擇的商品加入購物車中中
+  //將選擇的商品加入購物車中
   const handelAddItemsToCart = () => {
     let cartSelectedValue = selectedItems
+    console.log('handelSendItems value=' + JSON.stringify(selectedItems))
     setCartItems(cartSelectedValue)
     setVisible(false)
-    console.log('handelSendItems value=' + selectedItems)
   }
   //
   const handelDelCartItem = (event, itemCode) => {
@@ -63,13 +63,19 @@ const Create = () => {
     setCartItems(newCartItems)
   }
 
-  // 更新商品数量并重新计算价格
+  // 更新商品數量：需重新計算價格與更新email欄位
   const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return // 不能小於1
-
+    //if (newQuantity < 1) return // 不能小於1
+    const updateQuantity = parseInt(newQuantity, 10) || 0 // 確保輸入的是數字
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.itemCode === id ? { ...item, itemQuantity: newQuantity } : item,
+        item.itemCode === id
+          ? {
+              ...item,
+              itemQuantity: updateQuantity,
+              emailList: Array.from({ length: updateQuantity }, (_, i) => item.emailList[i] || ''),
+            }
+          : item,
       ),
     )
   }
@@ -80,12 +86,28 @@ const Create = () => {
     return cartItems.reduce((total, item) => total + getItemTotalPrice(item), 0)
   }
   const handleSubmit = (event) => {
+    console.log('handleEmailValueChange value=' + JSON.stringify(cartItems))
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
       event.stopPropagation()
     }
     setValidated(true)
+  }
+  // 更新某組的某個輸入框的值
+  const handleEmailValueChange = (id, inputIndex, value) => {
+    console.log('handleEmailValueChange id=' + id)
+    console.log('handleEmailValueChange value=' + value)
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.itemCode === id
+          ? {
+              ...item,
+              emailList: item.emailList.map((v, i) => (i === inputIndex ? value : v)),
+            }
+          : item,
+      ),
+    )
   }
   return (
     <CForm
@@ -94,17 +116,12 @@ const Create = () => {
       validated={validated}
       onSubmit={handleSubmit}
     >
-      <CCol md={4} className="position-relative">
+      <CCol md={6} className="position-relative">
         <CFormLabel htmlFor="username">客戶姓名</CFormLabel>
         <CFormInput type="text" id="username" defaultValue="" required />
         <CFormFeedback invalid>請輸入客戶姓名</CFormFeedback>
       </CCol>
-      <CCol md={4} className="position-relative">
-        <CFormLabel htmlFor="email">Email</CFormLabel>
-        <CFormInput type="text" id="email" defaultValue="" required />
-        <CFormFeedback invalid>請輸入Email</CFormFeedback>
-      </CCol>
-      <CCol md={4} className="position-relative">
+      <CCol md={6} className="position-relative">
         <CFormLabel htmlFor="cellphone">聯絡電話</CFormLabel>
         <CFormInput type="text" id="cellphone" defaultValue="" required />
         <CFormFeedback invalid>請輸入聯絡電話</CFormFeedback>
@@ -171,31 +188,55 @@ const Create = () => {
           </CTableHead>
           <CTableBody>
             {cartItems.map((row, index) => (
-              <CTableRow key={index} id={row['itemCode']}>
-                <CTableDataCell>{row['itemName']}</CTableDataCell>
-                <CTableDataCell>{row['itemPrice']}</CTableDataCell>
-                <CTableDataCell>{row['itemDate']}</CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    type="number"
-                    size="sm"
-                    max={10}
-                    min={1}
-                    value={row['itemQuantity']}
-                    onChange={(e) => updateQuantity(row['itemCode'], parseInt(e.target.value, 10))}
-                  />
-                </CTableDataCell>
-                <CTableDataCell>{getItemTotalPrice(row).toFixed(2)}</CTableDataCell>
-                <CTableDataCell>
-                  <CButton
-                    color="danger"
-                    size="sm"
-                    onClick={(e) => handelDelCartItem(e, row['itemCode'])}
-                  >
-                    <CIcon icon={cilTrash} size="sm" />
-                  </CButton>
-                </CTableDataCell>
-              </CTableRow>
+              <>
+                <CTableRow key={`item_${index}`} id={row['itemCode']}>
+                  <CTableDataCell>{row['itemName']}</CTableDataCell>
+                  <CTableDataCell>{row['itemPrice']}</CTableDataCell>
+                  <CTableDataCell>{row['itemDate']}</CTableDataCell>
+                  <CTableDataCell>
+                    <CFormInput
+                      type="number"
+                      size="sm"
+                      max={10}
+                      min={1}
+                      value={row['itemQuantity']}
+                      onChange={(e) =>
+                        updateQuantity(row['itemCode'], parseInt(e.target.value, 10))
+                      }
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>{getItemTotalPrice(row).toFixed(2)}</CTableDataCell>
+                  <CTableDataCell>
+                    <CButton
+                      color="danger"
+                      size="sm"
+                      onClick={(e) => handelDelCartItem(e, row['itemCode'])}
+                    >
+                      <CIcon icon={cilTrash} size="sm" />
+                    </CButton>
+                  </CTableDataCell>
+                </CTableRow>
+                {row['emailList'].map((inputValue, inputIndex) => (
+                  <CTableRow key={`email_${row['itemCode']}_${inputIndex}`}>
+                    <CTableDataCell colSpan={6}>
+                      <CRow>
+                        <CCol sm={1}>第{inputIndex + 1}組：</CCol>
+                        <CCol sm={4}>
+                          <CFormInput
+                            type="text"
+                            defaultValue={inputValue}
+                            placeholder="請輸入要發送QRCode的Email"
+                            size="sm"
+                            onChange={(e) =>
+                              handleEmailValueChange(row['itemCode'], inputIndex, e.target.value)
+                            }
+                          />
+                        </CCol>
+                      </CRow>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))}
+              </>
             ))}
           </CTableBody>
         </CTable>
@@ -210,6 +251,7 @@ const Create = () => {
         </CButton>
       </CCol>
       <CModal
+        scrollable
         size="xl"
         alignment="center"
         visible={visible}

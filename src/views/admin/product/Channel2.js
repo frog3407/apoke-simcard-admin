@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react'
-import ChannelProducts from '../../components/ChannelProducts'
+import ChannelProducts from '../../../components/ChannelProducts'
 const Channel2 = () => {
   return (
     <CRow>

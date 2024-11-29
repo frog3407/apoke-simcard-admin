@@ -70,123 +70,153 @@ const CustomStyles = () => {
       onSubmit={handleSubmit}
     >
       <MessageModal modalObj={modalObj}></MessageModal>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationUserId" className="form-label">
+      <CRow className="my-3">
+        <CFormLabel htmlFor="validationUserId" className="col-sm-1 col-form-label">
           帳號
         </CFormLabel>
-        <CFormInput type="text" id="validationUserId" defaultValue="" required />
-        <CFormFeedback invalid>請輸入帳號</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationPwd" className="form-label">
+        <CCol sm={6}>
+          <CFormInput type="text" id="validationUserId" defaultValue="" required />
+          <CFormFeedback invalid>請輸入帳號</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationPwd" className="col-sm-1 col-form-label">
           密碼
         </CFormLabel>
-        <CFormInput type="password" id="validationPwd" defaultValue="" required />
-        <CFormFeedback invalid>請輸入密碼</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationPwdConfirm" className="form-label">
+        <CCol sm={6}>
+          <CFormInput type="password" id="validationPwd" defaultValue="" required />
+          <CFormFeedback invalid>請輸入密碼</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationPwdConfirm" className="col-sm-1 col-form-label">
           密碼確認
         </CFormLabel>
-        <CFormInput type="password" id="validationPwdConfirm" defaultValue="" required />
-        <CFormFeedback invalid>請輸入密碼</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationPwdConfirm" className="form-label me-2">
+        <CCol sm={6}>
+          <CFormInput type="password" id="validationPwdConfirm" defaultValue="" required />
+          <CFormFeedback invalid>請輸入密碼</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationDealerLevel" className="col-sm-1 col-form-label">
           經銷商等級
         </CFormLabel>
-        {dealerLevelList.map((row, index) => (
-          <CFormCheck
-            key={index}
-            inline
-            type="radio"
-            value={row['id']}
-            name="dealerLevel"
-            label={row['name']}
-            required
-          />
-        ))}
+        <CCol sm={6}>
+          {dealerLevelList.map((row, index) => (
+            <CFormCheck
+              key={index}
+              inline
+              type="radio"
+              value={row['id']}
+              name="dealerLevel"
+              label={row['name']}
+              required
+            />
+          ))}
 
-        <CFormFeedback invalid>請選擇經銷商分級</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationDealerName" className="form-label">
+          <CFormFeedback invalid>請選擇經銷商分級</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationDealerName" className="col-sm-1 col-form-label">
           經銷商名稱
         </CFormLabel>
-        <CFormInput
-          type="text"
-          id="validationDealerName"
-          name="dealerName"
-          defaultValue=""
-          required
-        />
-        <CFormFeedback invalid>請輸入經銷商名稱</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationNumber" className="form-label">
+        <CCol sm={6}>
+          <CFormInput
+            type="text"
+            id="validationDealerName"
+            name="dealerName"
+            defaultValue=""
+            required
+          />
+          <CFormFeedback invalid>請輸入經銷商名稱</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationNumber" className="col-sm-1 col-form-label">
           統一編號
         </CFormLabel>
-        <CFormInput type="text" id="validationNumber" name="dealerNumber" defaultValue="" />
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationOwner" className="form-label">
+        <CCol sm={6}>
+          <CFormInput type="text" id="validationNumber" name="dealerNumber" defaultValue="" />
+          <CFormFeedback invalid>請輸入正確的統一編號</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationOwner" className="col-sm-1 col-form-label">
           負責人
         </CFormLabel>
-        <CFormInput type="text" id="validationOwner" name="dealerOwner" defaultValue="" required />
-        <CFormFeedback invalid>請輸入負責人</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationContactName" className="form-label">
+        <CCol sm={6}>
+          <CFormInput
+            type="text"
+            id="validationOwner"
+            name="dealerOwner"
+            defaultValue=""
+            required
+          />
+          <CFormFeedback invalid>請輸入負責人</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationContactName" className="col-sm-1 col-form-label">
           連絡人
         </CFormLabel>
-        <CFormInput
-          type="text"
-          id="validationContactName"
-          name="dealerContactName"
-          defaultValue=""
-          required
-        />
-        <CFormFeedback invalid>請輸入連絡人姓名</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationAddress" className="form-label">
+        <CCol sm={6}>
+          <CFormInput
+            type="text"
+            id="validationContactName"
+            name="dealerContactName"
+            defaultValue=""
+            required
+          />
+          <CFormFeedback invalid>請輸入連絡人姓名</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationAddress" className="col-sm-1 col-form-label">
           連絡地址
         </CFormLabel>
-        <CFormInput
-          type="text"
-          id="validationAddress"
-          name="dealerAddress"
-          defaultValue=""
-          required
-        />
-        <CFormFeedback invalid>請輸入聯繫地址</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationContactNumber" className="form-label">
+        <CCol sm={6}>
+          <CFormInput
+            type="text"
+            id="validationAddress"
+            name="dealerAddress"
+            defaultValue=""
+            required
+          />
+          <CFormFeedback invalid>請輸入聯繫地址</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationContactNumber" className="col-sm-1 col-form-label">
           連絡電話
         </CFormLabel>
-        <CFormInput
-          type="text"
-          id="validationContactNumber"
-          name="dealerContactNumber"
-          defaultValue=""
-          required
-        />
-        <CFormFeedback invalid>請輸入連絡電話</CFormFeedback>
-      </div>
-      <div className="mb-3">
-        <CFormLabel htmlFor="validationPhoneNumber" className="form-label">
+        <CCol sm={6}>
+          <CFormInput
+            type="text"
+            id="validationContactNumber"
+            name="dealerContactNumber"
+            defaultValue=""
+            required
+          />
+          <CFormFeedback invalid>請輸入連絡電話</CFormFeedback>
+        </CCol>
+      </CRow>
+      <CRow className="mb-3">
+        <CFormLabel htmlFor="validationPhoneNumber" className="col-sm-1 col-form-label">
           手機號碼
         </CFormLabel>
-        <CFormInput
-          type="text"
-          id="validationPhoneNumber"
-          name="dealerPhoneNumber"
-          defaultValue=""
-          required
-        />
-        <CFormFeedback invalid>請輸入連絡電話</CFormFeedback>
-      </div>
+        <CCol sm={6}>
+          <CFormInput
+            type="text"
+            id="validationPhoneNumber"
+            name="dealerPhoneNumber"
+            defaultValue=""
+            required
+          />
+          <CFormFeedback invalid>請輸入連絡電話</CFormFeedback>
+        </CCol>
+      </CRow>
+
       <CCol xs={12}>
         <CButton color="primary" type="submit">
           建立

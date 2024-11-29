@@ -51,6 +51,7 @@ const ChannelProducts = (props) => {
           itemPrice: item.itemPrice,
           itemDate: item.itemDate,
           itemQuantity: item.itemQuantity,
+          emailList: item.emailList,
         }
         initSelectedItemArray.push(newItem)
       })
@@ -308,6 +309,7 @@ const ChannelProducts = (props) => {
         itemPrice: itemPrice,
         itemDate: itemDate,
         itemQuantity: 1,
+        emailList: [''],
       }
       newSelectedItemArray.push(newItem)
     } else {
