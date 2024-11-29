@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 const MessageModal = (props) => {
   const { modalObj } = props
+  //定義 modalobj={"alert":"alert","type":"[空|reload:重新整理]"","title":"訊息標題","msg":"訊息內容","time":[執行的時間 單位毫秒],"navurl":"[如需要跳轉輸入url]"}
   const [visible, setVisible] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
@@ -12,12 +13,17 @@ const MessageModal = (props) => {
         setTimeout(() => {
           console.log('MessageModal setTimeoute')
           setVisible(false)
+          console.log('MessageModal navurl=' + JSON.stringify(modalObj))
           if (modalObj.navurl != '') {
+            console.log('MessageModal navigate')
             navigate(modalObj.navurl)
+          }
+          if (modalObj.type == 'reload') {
+            navigate(0)
           }
         }, time)
       }
-      console.log('modalObj.time=' + modalObj.time)
+
       if (modalObj.time && modalObj.time > 0) {
         setVisible(true)
         timer(modalObj.time)
