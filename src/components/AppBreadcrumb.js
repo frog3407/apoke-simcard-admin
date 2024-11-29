@@ -14,7 +14,7 @@ const AppBreadcrumb = () => {
   }
 
   const getBreadcrumbs = (location) => {
-    // console.log('location=' + location)
+    console.log('location=' + location)
     // console.log('location check=' + location.includes('/admin/user/detail/'))
     // console.log('location paths=' + JSON.stringify(paths))
 
@@ -23,13 +23,13 @@ const AppBreadcrumb = () => {
       //經銷商詳細資料的Breadcrumbs
       const searchPathname = '/admin/user/list'
       breadcrumbs.push({
-        pathname: searchPathname,
+        pathname: '/#' + searchPathname,
         name: getRouteName(searchPathname, routes),
         active: false,
       })
 
       breadcrumbs.push({
-        pathname: location,
+        pathname: '/#' + location,
         name: getRouteName('/admin/user/detail/:id', routes),
         active: true,
       })
