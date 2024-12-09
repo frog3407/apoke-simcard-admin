@@ -13,6 +13,7 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CTooltip,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilPencil } from '@coreui/icons'
@@ -61,30 +62,34 @@ const List = () => {
                   <CTableDataCell>產品更新通知</CTableDataCell>
                   <CTableDataCell>2024-10-28 12:16:53</CTableDataCell>
                   <CTableDataCell>
-                    <CButton
-                      color="info"
-                      size="sm"
-                      variant="outline"
-                      className="me-2"
-                      onClick={() => handleEditClick(1)}
-                    >
-                      <CIcon icon={cilPencil} size="sm" />
-                    </CButton>
+                    <CTooltip content="編輯">
+                      <CButton
+                        color="info"
+                        size="sm"
+                        variant="outline"
+                        className="me-2"
+                        onClick={() => handleEditClick(1)}
+                      >
+                        <CIcon icon={cilPencil} size="sm" />
+                      </CButton>
+                    </CTooltip>
                   </CTableDataCell>
                 </CTableRow>
                 <CTableRow>
                   <CTableDataCell>產品下架通知</CTableDataCell>
                   <CTableDataCell>2024-10-28 12:16:53</CTableDataCell>
                   <CTableDataCell>
-                    <CButton
-                      color="info"
-                      size="sm"
-                      variant="outline"
-                      className="me-2"
-                      onClick={() => handleEditClick(2)}
-                    >
-                      <CIcon icon={cilPencil} size="sm" />
-                    </CButton>
+                    <CTooltip content="編輯">
+                      <CButton
+                        color="info"
+                        size="sm"
+                        variant="outline"
+                        className="me-2"
+                        onClick={() => handleEditClick(2)}
+                      >
+                        <CIcon icon={cilPencil} size="sm" />
+                      </CButton>
+                    </CTooltip>
                   </CTableDataCell>
                 </CTableRow>
               </CTableBody>

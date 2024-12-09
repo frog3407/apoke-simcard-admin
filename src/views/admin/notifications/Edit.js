@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   CCard,
@@ -10,15 +10,19 @@ import {
   CFormLabel,
   CFormInput,
   CFormFeedback,
-  CFormTextarea,
+  CButton,
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import ReactQuill, { Quill } from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+
 const Edit = () => {
   const { id } = useParams() // 取得路徑中的動態 ID
   const [notificationsType, setNotificationsType] = useState('add') // 新增(add)或編輯(edit)
   const [showTitle, setShowTitle] = useState('新增') // 新增(add)或編輯(edit)
   const [validated, setValidated] = useState(false)
+  const [value, setValue] = useState('公告內容放在這裡')
   useEffect(() => {
     const checkType = parseInt(id, 10) || 0
     if (checkType == 0) {
@@ -39,6 +43,43 @@ const Edit = () => {
     }
     setValidated(true)
   }
+
+  //編輯器模組設定
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        [{ header: '1' }, { header: '2' }, { size: [] }],
+        //[{ font: ['Arial', 'Times New Roman', 'Courier New', 'Comic Sans MS', 'Impact','微軟正黑體'] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+        [
+          { list: 'ordered' },
+          { list: 'bullet' },
+          { indent: '-1' },
+          { indent: '+1' },
+          { align: [] },
+        ],
+        [{ color: [] }, { background: [] }, 'link', 'clean'],
+      ],
+    }),
+    [],
+  )
+
+  const formats = [
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'color',
+    'background',
+    'list',
+    'bullet',
+    'align',
+    'image',
+    'video',
+  ]
+
   return (
     <>
       <div className="p-2">
@@ -65,15 +106,20 @@ const Edit = () => {
 
               <CRow>
                 <CCol md={12}>
-                  <CFormTextarea label="公告內容" rows={10}>
-                    JOYTEL卡充值注意事项： ①
-                    充值套餐有效期请查看商品报价（基础数据管理-商品管理-商品报价） ②
-                    卓一发货系统只能自动充值天数，如需重置流量请联系人工客服。 ③
-                    已激活的充值套餐不支持取消，未激活的套餐如需取消的需收取2元的手续费。 ④
-                    单次充值不要超过30天，单张卡超过30天的可以分多次充值，不限充值次数（比如要充值40天套餐，分两次下单，先充值30天，再充值10天）
-                    ⑤ 如果是X天XGB这种总量套餐，天数填写1即可。（比如日本30天3GB，天数那边填1即可）
-                    ①批量充值模板里，充值商品名称【商品报价】里面复制，切勿手打，因为有些名称为了视觉统一，加了空格。
-                  </CFormTextarea>
+                  <ReactQuill
+                    theme="snow"
+                    modules={modules}
+                    formats={formats}
+                    value={value}
+                    onChange={setValue}
+                  />
+                </CCol>
+              </CRow>
+              <CRow>
+                <CCol md={12} className="mt-3 text-end">
+                  <CButton color="primary" type="submit">
+                    儲存
+                  </CButton>
                 </CCol>
               </CRow>
             </CForm>

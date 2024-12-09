@@ -17,7 +17,7 @@ import {
   CBadge,
   CFormInput,
   CFormSwitch,
-  CNavLink,
+  CTooltip,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilMoney } from '@coreui/icons'
@@ -324,15 +324,17 @@ const List = () => {
                           )}
                         </CTableDataCell>
                         <CTableDataCell>
-                          <CButton
-                            color="info"
-                            size="sm"
-                            variant="outline"
-                            className="me-2"
-                            onClick={() => handleEditClick(row)}
-                          >
-                            <CIcon icon={cilPencil} size="sm" />
-                          </CButton>
+                          <CTooltip content="編輯">
+                            <CButton
+                              color="info"
+                              size="sm"
+                              variant="outline"
+                              className="me-2"
+                              onClick={() => handleEditClick(row)}
+                            >
+                              <CIcon icon={cilPencil} size="sm" />
+                            </CButton>
+                          </CTooltip>
                         </CTableDataCell>
                       </>
                     )}

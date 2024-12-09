@@ -12,12 +12,19 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CImage,
+  CTooltip,
 } from '@coreui/react'
 import { DocsExample } from 'src/components'
 import CIcon from '@coreui/icons-react'
 import { cilQrCode, cilInfo } from '@coreui/icons'
 
 const List = () => {
+  const [visibleQrCode, setVisibleQrCode] = useState(false)
   return (
     <CRow>
       <CCol xs={12}>
@@ -70,9 +77,17 @@ const List = () => {
                     <CTableDataCell>2024-10-28 12:16:53</CTableDataCell>
                     <CTableDataCell>abc@gmail.com</CTableDataCell>
                     <CTableDataCell>
-                      <CButton color="info" size="sm" variant="outline" className="me-2">
-                        <CIcon icon={cilQrCode} size="sm" />
-                      </CButton>
+                      <CTooltip content="檢視QrCode">
+                        <CButton
+                          color="info"
+                          size="sm"
+                          variant="outline"
+                          className="me-2"
+                          onClick={() => setVisibleQrCode(!visibleQrCode)}
+                        >
+                          <CIcon icon={cilQrCode} size="sm" />
+                        </CButton>
+                      </CTooltip>
                     </CTableDataCell>
                   </CTableRow>
                   <CTableRow>
@@ -84,9 +99,17 @@ const List = () => {
                     <CTableDataCell>2024-10-28 12:16:53</CTableDataCell>
                     <CTableDataCell>abc@gmail.com</CTableDataCell>
                     <CTableDataCell>
-                      <CButton color="info" size="sm" variant="outline" className="me-2">
-                        <CIcon icon={cilQrCode} size="sm" />
-                      </CButton>
+                      <CTooltip content="檢視QrCode">
+                        <CButton
+                          color="info"
+                          size="sm"
+                          variant="outline"
+                          className="me-2"
+                          onClick={() => setVisibleQrCode(!visibleQrCode)}
+                        >
+                          <CIcon icon={cilQrCode} size="sm" />
+                        </CButton>
+                      </CTooltip>
                     </CTableDataCell>
                   </CTableRow>
                   <CTableRow color="info">
@@ -118,7 +141,13 @@ const List = () => {
                     <CTableDataCell>2024-10-28 12:16:53</CTableDataCell>
                     <CTableDataCell>abc@gmail.com</CTableDataCell>
                     <CTableDataCell>
-                      <CButton color="info" size="sm" variant="outline" className="me-2">
+                      <CButton
+                        color="info"
+                        size="sm"
+                        variant="outline"
+                        className="me-2"
+                        onClick={() => setVisibleQrCode(!visibleQrCode)}
+                      >
                         <CIcon icon={cilQrCode} size="sm" />
                       </CButton>
                     </CTableDataCell>
@@ -132,7 +161,13 @@ const List = () => {
                     <CTableDataCell>2024-10-28 12:16:53</CTableDataCell>
                     <CTableDataCell>abc@gmail.com</CTableDataCell>
                     <CTableDataCell>
-                      <CButton color="info" size="sm" variant="outline" className="me-2">
+                      <CButton
+                        color="info"
+                        size="sm"
+                        variant="outline"
+                        className="me-2"
+                        onClick={() => setVisibleQrCode(!visibleQrCode)}
+                      >
                         <CIcon icon={cilQrCode} size="sm" />
                       </CButton>
                     </CTableDataCell>
@@ -140,6 +175,20 @@ const List = () => {
                 </CTableBody>
               </CTable>
             </DocsExample>
+            <CModal
+              visible={visibleQrCode}
+              alignment="center"
+              size="sm"
+              onClose={() => setVisibleQrCode(false)}
+              aria-labelledby="showQrCode"
+            >
+              <CModalHeader>
+                <CModalTitle>查看QRCode</CModalTitle>
+              </CModalHeader>
+              <CModalBody>
+                <CImage fluid src="./SE20241009131949026.png" />
+              </CModalBody>
+            </CModal>
           </CCardBody>
         </CCard>
       </CCol>
