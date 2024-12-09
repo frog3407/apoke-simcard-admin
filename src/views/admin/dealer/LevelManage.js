@@ -60,6 +60,13 @@ const LevelManage = () => {
             <strong>經銷商分級設定</strong>
           </CCardHeader>
           <CCardBody>
+            <CRow className="mb-3 mx-5">
+              <CCol sm={12}>
+                <small className="text-muted">
+                  分潤%數：依經銷商等級去算，換算後經銷商可以看到的產品價格；EX：成本300元，分潤%數輸入30，則300+30%=390元。
+                </small>
+              </CCol>
+            </CRow>
             <CForm
               className="row mx-5 g-3 needs-validation"
               noValidate
