@@ -38,6 +38,28 @@ const ChannelProducts = (props) => {
   const [totalPages, setTotalPages] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true) // 是否有更多資料
+  const [mccData, setMccData] = useState([]) //tgt mcc的資料
+
+  console.log('channelName=' + channelName)
+
+  //從MCC list.xlsx 檔案取出資料，可以讓tgt產品資料的MCC對應國家地區名稱
+  useEffect(() => {
+    if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
+      fetch('./MCC list.xlsx')
+        .then((response) => response.arrayBuffer()) // 將檔案讀取為 ArrayBuffer
+        .then((buffer) => {
+          const workbook = XLSX.read(buffer, { type: 'array' })
+          const sheetName = workbook.SheetNames[0] // 讀取第一個工作表
+          const worksheet = workbook.Sheets[sheetName]
+          const jsonData = XLSX.utils.sheet_to_json(worksheet) // 轉換為 JSON 格式
+          //console.log('MCC list jsonData=' + JSON.stringify(jsonData))
+          setMccData(jsonData)
+        })
+        .catch((error) => console.error('Error reading Excel file:', error))
+    } else {
+      setMccData([{ mcc: '0', 国家名称: '', 'Country Name': '' }])
+    }
+  }, [])
 
   useEffect(() => {
     let initSelectedItemArray = []
@@ -59,15 +81,31 @@ const ChannelProducts = (props) => {
     }
     console.log('hasMore=' + hasMore)
     if (hasMore) {
-      fetchData(currentPage)
+      //fetchData(currentPage)
+      if (mccData.length) {
+        fetchData(currentPage)
+      }
     }
-  }, [currentPage])
+  }, [currentPage, mccData])
 
   // 分頁邏輯-切換頁面時更新顯示資料
   const paginateData = () => {
     const start = (currentPage - 1) * itemsPerPage
     const end = start + itemsPerPage
     return filteredData.slice(start, end)
+  }
+
+  const createMccMap = () => {
+    const mccMap = new Map()
+    mccData.forEach((entry) => {
+      entry.mcc
+        .toString()
+        .split(',')
+        .forEach((mcc) => {
+          mccMap.set(mcc.trim(), entry.国家名称) // 去除多余空格并映射 mcc 到国家名称
+        })
+    })
+    return mccMap
   }
 
   const fetchData = async (page) => {
@@ -81,7 +119,7 @@ const ChannelProducts = (props) => {
           const sheetName = workbook.SheetNames[0] // 讀取第一個工作表
           const worksheet = workbook.Sheets[sheetName]
           const jsonData = XLSX.utils.sheet_to_json(worksheet) // 轉換為 JSON 格式
-          console.log('jsonData=' + JSON.stringify(jsonData))
+          //console.log('fetchData jsonData=' + JSON.stringify(jsonData))
 
           const updatedData = jsonData.map((row) => ({
             ...row, // 保留其他欄位不變
@@ -106,27 +144,64 @@ const ChannelProducts = (props) => {
         .catch((error) => console.error('Error reading Excel file:', error))
     } else if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
       try {
+        const mccMap = createMccMap()
         //透過API取得產品資料
         let sendData = { page: page, producttype: 'DAILY' }
         const result = await apiGetChannel2Products(sendData)
 
-        console.log('result=' + JSON.stringify(result))
+        //console.log('fetchData result=' + JSON.stringify(result))
+        console.log('fetchData total=' + result.result.total)
         if (page == 1) {
           // 根據返回的資料更新總頁數
           setTotalPages(Math.ceil(result.result.total / pageSize))
         }
-        console.log('totalPages=' + totalPages)
-        console.log('page=' + page)
+        console.log('fetchData totalPages=' + totalPages)
+        console.log('fetchData page=' + page)
         if (result.result.data.length > 0) {
-          setFullData((prevData) => [...prevData, ...result.result.data]) // 追加新資料
-          setFilteredData((prevData) => [...prevData, ...result.result.data]) // 追加新資料
-          let loadPage = page + 1
-          console.log('loadPage=' + loadPage)
+          // 替换 MCC 的逻辑
+          //比對符合的字串替換國家名稱
+          // const updated = result.result.data.map((item) => {
+          //   console.log('item.mcc=' + item.mcc)
+          //   const matched = mccData.find((entry) => entry.mcc.toString() === item.mcc.toString())
+          //   return {
+          //     ...item,
+          //     mcc: matched ? matched.国家名称 : item.mcc, // 替換為國家名稱或原本的值
+          //   }
+          // })
 
-          //註解fetchData 暫時先取一次就好
-          //fetchData(loadPage)
-          setHasMore(false) //需拿掉 暫時先取一次就好
-          setIsLoading(false) //需拿掉 暫時先取一次就好
+          // //如果mcc="223,224" 這種格式的話也要替換
+          // const updated1 = updated.map((item) => {
+          //   const replacedMcc = item.mcc
+          //     .split(',') // 將逗號芬個的字串拆解
+          //     .map((mccCode) => {
+          //       const matched = mccData.find((entry) => entry.mcc === parseInt(mccCode, 10))
+          //       return matched ? matched.国家名称 : mccCode // 替換為國家名稱或原本的值
+          //     })
+          //     .join(',') // 重新拼接為逗號分隔的字串
+
+          //   return { ...item, mcc: replacedMcc }
+          // })
+
+          const updated = result.result.data.map((item) => {
+            const replacedMcc = [
+              ...new Set( // 使用 Set 去重
+                item.mcc
+                  .split(',') // 将逗号分隔的字符串拆分成数组
+                  .map((mccCode) => mccMap.get(mccCode.trim()) || mccCode), // 替换为国家名称或保留原值
+              ),
+            ].join(',') // 将数组重新拼接为逗号分隔的字符串
+
+            return { ...item, mcc: replacedMcc }
+          })
+
+          setFullData((prevData) => [...prevData, ...updated]) // 追加新資料
+          setFilteredData((prevData) => [...prevData, ...updated]) // 追加新資料
+          let loadPage = page + 1
+          console.log('fetchData loadPage=' + loadPage)
+          console.log('fetchData updated=' + JSON.stringify(updated))
+          fetchData(loadPage)
+          setHasMore(false)
+          setIsLoading(false)
         } else {
           setHasMore(false)
           setIsLoading(false)
@@ -137,6 +212,7 @@ const ChannelProducts = (props) => {
       }
     }
   }
+
   //要顯示的欄位
   const displayOrder =
     channelName === import.meta.env.VITE_PRODUCT_CHANNEL1 && !isSelect
