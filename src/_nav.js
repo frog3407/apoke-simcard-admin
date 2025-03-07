@@ -37,13 +37,13 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: '經銷商管理(admin)',
+    name: '帳戶管理',
     to: '/admin/user/create',
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: '建立經銷商',
+        name: '建立帳戶',
         to: '/admin/user/create',
       },
       {

@@ -96,3 +96,9 @@ export const apiGetChannel2Products = (data) =>
 
 //登入
 export const apiLogin = (data) => fetchDataCall('user/login', 'post', data, false, false, false)
+//新增管理者
+export const apiAddAdmin = (data) =>
+  fetchDataCall('user/addadmin', 'post', data, false, false, false)
+//新增經銷商
+export const apiAddDealer = (data) =>
+  fetchDataCall('user/adddealer', 'post', data, false, false, false)

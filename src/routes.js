@@ -35,7 +35,7 @@ const routes = [
   { path: '/admin/product/manage', name: '經銷價設定', element: ProductManage },
   { path: '/admin/product/channel1', name: '渠道1(joytel)', element: Product1 },
   { path: '/admin/product/channel2', name: '渠道2(tgt)', element: Product2 },
-  { path: '/admin/user/create', name: '建立經銷商', element: UserCreate },
+  { path: '/admin/user/create', name: '建立帳戶', element: UserCreate },
   { path: '/admin/user/list', name: '經銷商列表', element: UserList },
   { path: '/admin/user/detail/:id', name: '經銷商詳細資料', element: UserDetail }, //這邊的path有改要改AppBreadcrumb.js裡面的邏輯
   { path: '/admin/dealer/level', name: '經銷商分級設定', element: LevelManage },
