@@ -35,6 +35,10 @@ export const setAuthToken = (token) => {
   localStorage.setItem('token', token)
   //cookies.set(TOKEN_NAME, token, { path: '/' })
 }
+export const removeAuthToken = () => {
+  localStorage.removeItem('token')
+  //cookies.remove(TOKEN_NAME, { path: '/' })
+}
 
 const handleResponse = async (response, isContinue, download) => {
   //   document.querySelector('.popup-loading').classList.remove('active')
@@ -96,6 +100,11 @@ export const apiGetChannel2Products = (data) =>
 
 //登入
 export const apiLogin = (data) => fetchDataCall('user/login', 'post', data, false, false, false)
+//登出
+export const apiLogout = (data) => fetchDataCall('user/logout', 'post', null, false, false, true)
+//修改密碼
+export const apiResetPwd = (data) =>
+  fetchDataCall('user/resetpwd', 'post', data, false, false, true)
 //新增管理者
 export const apiAddAdmin = (data) =>
   fetchDataCall('user/addadmin', 'post', data, false, false, false)

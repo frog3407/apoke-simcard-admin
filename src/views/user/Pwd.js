@@ -12,26 +12,48 @@ import {
   CButton,
 } from '@coreui/react'
 import MessageModal from 'src/components/MessageModal'
+import { apiResetPwd } from '../../utils/Api'
+import { validatePassword } from '../../utils/validator'
 
 const Pwd = () => {
   const [validated, setValidated] = useState(false)
   const [modalObj, setModalObj] = useState({}) //顯示modal
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget
     console.log('form.checkValidity()=' + form.checkValidity())
     event.preventDefault()
     event.stopPropagation()
     if (form.checkValidity() === true) {
-      //檢查格式→呼叫API (未完成)
-      setModalObj({
-        alert: 'alert',
-        type: 'reload',
-        title: '訊息通知',
-        msg: '密碼修改成功',
-        time: 1500,
-        navurl: '',
-      })
+      const oldPwd = form.elements.inputOldPwd.value
+      const newPwd = form.elements.inputNewPwd.value
+      const confirmNewPwd = form.elements.inputConfirmNewPwd.value
+      if (!validatePassword(newPwd)) {
+        //新密碼格式不符合規範
+        console.log('新密碼格式不符合規範')
+        return
+      }
+      if (newPwd !== confirmNewPwd) {
+        //新密碼與確認新密碼不相符
+        console.log('新密碼與確認新密碼不相符')
+        return
+      }
+      //呼叫API
+      // const result = await apiResetPwd({
+      //   pwd: oldPwd,
+      //   newPwd: newPwd,
+      //   confirmnewpwd: confirmNewPwd,
+      // })
+
+      // //檢查格式→呼叫API (未完成)
+      // setModalObj({
+      //   alert: 'alert',
+      //   type: 'reload',
+      //   title: '訊息通知',
+      //   msg: '密碼修改成功',
+      //   time: 1500,
+      //   navurl: '',
+      // })
     }
     setValidated(true)
   }
