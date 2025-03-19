@@ -23,7 +23,7 @@ const MessageModal = (props) => {
           }
         }, time)
       }
-
+      console.log('MessageModal time=' + modalObj.time)
       if (modalObj.time && modalObj.time > 0) {
         setVisible(true)
         timer(modalObj.time)

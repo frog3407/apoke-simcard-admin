@@ -107,7 +107,7 @@ export const apiResetPwd = (data) =>
   fetchDataCall('user/resetpwd', 'post', data, false, false, true)
 //新增管理者
 export const apiAddAdmin = (data) =>
-  fetchDataCall('user/addadmin', 'post', data, false, false, false)
+  fetchDataCall('user/addadmin', 'post', data, false, false, true)
 //新增經銷商
 export const apiAddDealer = (data) =>
-  fetchDataCall('user/adddealer', 'post', data, false, false, false)
+  fetchDataCall('user/adddealer', 'post', data, false, false, true)
