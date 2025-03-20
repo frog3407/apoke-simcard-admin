@@ -11,6 +11,7 @@ import {
   CFormInput,
   CInputGroup,
   CInputGroupText,
+  CFormFeedback,
   CRow,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -19,6 +20,7 @@ import { apiLogin, setAuthToken } from '../../../utils/Api'
 const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   const navigate = useNavigate()
   const fetchLogin = async () => {
     try {
@@ -29,7 +31,8 @@ const Login = () => {
         setAuthToken(result.result.token)
         navigate('/dashboard')
       } else {
-        alert(result.message)
+        setErrorMessage('帳號或密碼錯誤')
+        //alert(result.message)
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -47,7 +50,7 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm>
+                  <CForm noValidate>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
                     <CInputGroup className="mb-3">
@@ -71,6 +74,7 @@ const Login = () => {
                         autoComplete="current-password"
                       />
                     </CInputGroup>
+                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     <CRow>
                       <CCol xs={6}>
                         <CButton color="primary" className="px-4" onClick={handleLogin}>

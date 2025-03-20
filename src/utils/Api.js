@@ -101,7 +101,7 @@ export const apiGetChannel2Products = (data) =>
 //登入
 export const apiLogin = (data) => fetchDataCall('user/login', 'post', data, false, false, false)
 //登出
-export const apiLogout = (data) => fetchDataCall('user/logout', 'post', null, false, false, true)
+export const apiLogout = () => fetchDataCall('user/logout', 'post', null, false, false, true)
 //修改密碼
 export const apiResetPwd = (data) =>
   fetchDataCall('user/resetpwd', 'post', data, false, false, true)
@@ -111,3 +111,7 @@ export const apiAddAdmin = (data) =>
 //新增經銷商
 export const apiAddDealer = (data) =>
   fetchDataCall('user/adddealer', 'post', data, false, false, true)
+export const apiDealerPrice = (data) =>
+  fetchDataCall('manage/dealerprice', 'post', data, false, false, true)
+export const apiGetDealerPrice = () =>
+  fetchDataCall('manage/getdealerprice', 'get', null, false, false, true)

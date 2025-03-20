@@ -14,6 +14,7 @@ import {
 } from '@coreui/react'
 import MessageModal from 'src/components/MessageModal'
 import { apiAddAdmin, apiAddDealer } from '../../../utils/Api'
+import { validateUsername, validatePassword } from '../../../utils/validator'
 const Create = () => {
   const [modalObj, setModalObj] = useState({}) //顯示modal
   const [selectRoleId, setSelectRoleId] = useState(99)
@@ -31,7 +32,11 @@ const Create = () => {
     dealerAddress: false,
     dealerContactNumber: false,
     dealerPhoneNumber: false,
+    adminName: false,
+    adminContactNumber: false,
+    adminPhoneNumber: false,
   })
+  const [errorMessage, setErrorMessage] = useState('') //錯誤訊息
 
   const roleList = [
     {
@@ -47,7 +52,7 @@ const Create = () => {
     {
       id: 2,
       role: '客服',
-      desc: '可以查詢全部經銷商基本資料與全部經銷商訂單資料，可以幫助經銷商查找帳號密碼',
+      desc: '可以查詢全部經銷商基本資料與全部經銷商訂單資料，可以幫助經銷商查找帳號',
     },
     {
       id: 3,
@@ -64,8 +69,14 @@ const Create = () => {
             使用者名稱
           </CFormLabel>
           <CCol sm={6}>
-            <CFormInput type="text" id="validationName" name="name" defaultValue="" required />
-            <CFormFeedback invalid>請輸入使用者名稱</CFormFeedback>
+            <CFormInput
+              type="text"
+              id="validationName"
+              name="name"
+              defaultValue=""
+              className={errors.adminName ? 'is-invalid' : ''}
+            />
+            {errors.adminName && <CFormFeedback invalid>請輸入使用者名稱</CFormFeedback>}
           </CCol>
         </CRow>
 
@@ -74,8 +85,13 @@ const Create = () => {
             聯絡電話
           </CFormLabel>
           <CCol sm={6}>
-            <CFormInput type="text" id="validationContactNumber" name="contactNumber" />
-            <CFormFeedback invalid>請輸入聯絡電話</CFormFeedback>
+            <CFormInput
+              type="text"
+              id="validationContactNumber"
+              name="contactNumber"
+              className={errors.adminContactNumber ? 'is-invalid' : ''}
+            />
+            {errors.adminContactNumber && <CFormFeedback invalid>請輸入聯絡電話</CFormFeedback>}
           </CCol>
         </CRow>
         <CRow className="mb-3">
@@ -83,8 +99,13 @@ const Create = () => {
             手機號碼
           </CFormLabel>
           <CCol sm={6}>
-            <CFormInput type="text" id="validationPhoneNumber" name="phoneNumber" />
-            <CFormFeedback invalid>請輸入手機號碼</CFormFeedback>
+            <CFormInput
+              type="text"
+              id="validationPhoneNumber"
+              name="phoneNumber"
+              className={errors.adminPhoneNumber ? 'is-invalid' : ''}
+            />
+            {errors.adminPhoneNumber && <CFormFeedback invalid>請輸入手機號碼</CFormFeedback>}
           </CCol>
         </CRow>
       </CCol>
@@ -235,14 +256,7 @@ const Create = () => {
 
     event.preventDefault()
     event.stopPropagation()
-    setModalObj({
-      alert: 'alert',
-      type: '',
-      title: '訊息通知',
-      msg: 'test',
-      time: 2000,
-      navurl: '',
-    })
+
     const username = form.elements['userId'].value
     const password = form.elements['password'].value
     const password_confirm = form.elements['password_confirm'].value
@@ -259,8 +273,7 @@ const Create = () => {
       newErrors.role = false
     }
 
-    const usernameRegex = /^[A-Za-z0-9]{3,10}$/
-    if (!usernameRegex.test(username)) {
+    if (!validateUsername(username)) {
       newErrors.username = true
       isValid = false
     } else {
@@ -268,8 +281,7 @@ const Create = () => {
     }
 
     // 檢查密碼格式
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
-    if (!passwordRegex.test(password)) {
+    if (!validatePassword(password)) {
       newErrors.password = true
       isValid = false
     } else {
@@ -284,7 +296,10 @@ const Create = () => {
       newErrors.password_confirm = false
     }
 
-    setErrors(newErrors)
+    if (!isValid) {
+      setErrors(newErrors)
+      return
+    }
 
     console.log('isValid=' + isValid)
     //檢查格式→呼叫API (未完成)
@@ -295,18 +310,40 @@ const Create = () => {
         ? form.elements['contactNumber'].value
         : ''
       const phone_number = form.elements['phoneNumber'] ? form.elements['phoneNumber'].value : ''
-      let sendAdminData = {
-        username: username,
-        password: password,
-        level: level,
-        name: name,
-        contact_number: contact_number,
-        phone_number: phone_number,
-        line_id: line_id,
+
+      if (name == '') {
+        newErrors.adminName = true
+        isValid = false
+      } else {
+        newErrors.adminName = false
       }
-      console.log('sendAdminData=' + sendAdminData)
+      if (contact_number == '') {
+        newErrors.adminContactNumber = true
+        isValid = false
+      } else {
+        newErrors.adminContactNumber = false
+      }
+      if (phone_number == '') {
+        newErrors.adminPhoneNumber = true
+        isValid = false
+      } else {
+        newErrors.adminPhoneNumber = false
+      }
+
       if (isValid) {
+        let sendAdminData = {
+          username: username,
+          password: password,
+          level: level,
+          name: name,
+          contact_number: contact_number,
+          phone_number: phone_number,
+          line_id: line_id,
+        }
+        console.log('sendAdminData=' + sendAdminData)
         fetchAdmin(sendAdminData)
+      } else {
+        setErrors(newErrors)
       }
     } else if (selectRoleId == 3) {
       //新增經銷商
@@ -369,25 +406,26 @@ const Create = () => {
       } else {
         newErrors.dealerPhoneNumber = false
       }
-      let sendDealerData = {
-        username: username,
-        password: password, //密碼
-        level: level, //角色
-        name: dealerName, //經銷商名稱
-        number: dealerNumber, //統一編號
-        owner: dealerOwner, //負責人
-        contact_name: dealerContactName, //聯絡人
-        contact_addr: dealerAddress, //聯絡地址
-        contact_number: dealerContactNumber, //聯絡電話
-        phone_number: dealerPhoneNumber, //手機號碼
-        note: dealerNote, //備註
-        line_id: line_id,
-      }
+
       if (isValid) {
+        let sendDealerData = {
+          username: username,
+          password: password, //密碼
+          level: level, //角色
+          name: dealerName, //經銷商名稱
+          number: dealerNumber, //統一編號
+          owner: dealerOwner, //負責人
+          contact_name: dealerContactName, //聯絡人
+          contact_addr: dealerAddress, //聯絡地址
+          contact_number: dealerContactNumber, //聯絡電話
+          phone_number: dealerPhoneNumber, //手機號碼
+          note: dealerNote, //備註
+          line_id: line_id,
+        }
         fetchDealer(sendDealerData)
+      } else {
+        setErrors(newErrors)
       }
-    } else {
-      //未選擇角色
     }
   }
 
@@ -397,34 +435,19 @@ const Create = () => {
       const result = await apiAddAdmin(sendData)
       console.log('result=' + JSON.stringify(result))
       if (result.code === '0000') {
-        //navigate('/dashboard')
         setModalObj({
           alert: 'alert',
-          type: '',
+          type: 'reload',
           title: '訊息通知',
           msg: '建立成功',
-          time: 1500,
-          navurl: '/admin/user/list',
-        })
-      } else {
-        setModalObj({
-          alert: 'alert',
-          type: '',
-          title: '訊息通知',
-          msg: '建立失敗，錯誤訊息:' + result.message,
-          time: 2000,
+          time: 2500,
           navurl: '',
         })
+      } else {
+        setErrorMessage('建立失敗，錯誤訊息:' + result.message)
       }
     } catch (error) {
-      setModalObj({
-        alert: 'alert',
-        type: '',
-        title: '訊息通知',
-        msg: '建立失敗，錯誤訊息:' + error,
-        time: 2000,
-        navurl: '',
-      })
+      setErrorMessage('建立失敗，錯誤訊息:' + error)
     }
   }
   const fetchDealer = async (sendData) => {
@@ -438,28 +461,14 @@ const Create = () => {
           type: '',
           title: '訊息通知',
           msg: '建立成功',
-          time: 1500,
+          time: 2500,
           navurl: '/admin/user/list',
         })
       } else {
-        setModalObj({
-          alert: 'alert',
-          type: '',
-          title: '訊息通知',
-          msg: '建立失敗，錯誤訊息:' + result.message,
-          time: 2000,
-          navurl: '',
-        })
+        setErrorMessage('建立失敗，錯誤訊息:' + result.message)
       }
     } catch (error) {
-      setModalObj({
-        alert: 'alert',
-        type: '',
-        title: '訊息通知',
-        msg: '建立失敗，錯誤訊息:' + error,
-        time: 2000,
-        navurl: '',
-      })
+      setErrorMessage('建立失敗，錯誤訊息:' + error)
     }
   }
 
@@ -558,12 +567,14 @@ const Create = () => {
                 </CCol>
               </CRow>
               {selectRoleId == 3 ? DealerForm() : AdminForm()}
-
-              <CCol xs={12}>
-                <CButton color="primary" type="submit">
-                  建立
-                </CButton>
-              </CCol>
+              <CRow className="mb-3">
+                <CCol xs={1}>
+                  <CButton color="primary" type="submit">
+                    建立
+                  </CButton>
+                </CCol>
+                {errorMessage && <div className="col-sm-6 text-danger">{errorMessage}</div>}
+              </CRow>
             </CForm>
           </CCardBody>
         </CCard>

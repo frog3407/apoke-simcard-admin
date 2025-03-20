@@ -2,34 +2,46 @@ import React, { useEffect, useState } from 'react'
 import { CModal, CModalHeader, CModalTitle, CModalBody } from '@coreui/react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-const MessageModal = (props) => {
-  const { modalObj } = props
-  //定義 modalobj={"alert":"alert","type":"[空|reload:重新整理]"","title":"訊息標題","msg":"訊息內容","time":[執行的時間 單位毫秒],"navurl":"[如需要跳轉輸入url]"}
+
+const MessageModal = ({ modalObj }) => {
   const [visible, setVisible] = useState(false)
+  const [closeBtn, setCloseBtn] = useState(false)
   const navigate = useNavigate()
-  useEffect(() => {
-    if (modalObj) {
-      const timer = (time) => {
-        setTimeout(() => {
-          console.log('MessageModal setTimeoute')
-          setVisible(false)
-          console.log('MessageModal navurl=' + JSON.stringify(modalObj))
-          if (modalObj.navurl != '') {
-            console.log('MessageModal navigate')
-            navigate(modalObj.navurl)
-          }
-          if (modalObj.type == 'reload') {
-            navigate(0)
-          }
-        }, time)
-      }
-      console.log('MessageModal time=' + modalObj.time)
-      if (modalObj.time && modalObj.time > 0) {
-        setVisible(true)
-        timer(modalObj.time)
-      }
+
+  const handleNavigation = (navurl, type) => {
+    if (navurl) {
+      navigate(navurl)
     }
-  }, [modalObj])
+  }
+
+  const startTimer = (time, type) => {
+    if (time && time > 0) {
+      setTimeout(() => {
+        setVisible(false)
+        if (type === 'reload') {
+          navigate(0) // 在計時器結束後觸發重新整理
+        }
+      }, time)
+    } else if (type === 'reload') {
+      navigate(0) // 若無計時器，立即觸發重新整理
+    }
+  }
+
+  useEffect(() => {
+    if (!modalObj || Object.keys(modalObj).length === 0) {
+      console.log('modalObj is empty, skipping effect')
+      return
+    }
+
+    const { closebtn, navurl, type, time } = modalObj
+    setCloseBtn(!!closebtn)
+    if (navurl) {
+      handleNavigation(navurl, type)
+    }
+    setVisible(true)
+    startTimer(time, type) // 傳遞 type 以處理 reload 邏輯
+  }, [JSON.stringify(modalObj)]) // 使用 JSON.stringify 比較 modalObj 的變化
+
   return (
     <CModal
       alignment="center"
@@ -37,17 +49,27 @@ const MessageModal = (props) => {
       visible={visible}
       backdrop="static"
       keyboard={false}
-      //   onClose={() => setVisible(false)}
+      onClose={() => setVisible(false)}
       aria-labelledby="FullscreenExample2"
     >
-      <CModalHeader closeButton={false}>
-        <CModalTitle id="FullscreenExample2">{modalObj.title}</CModalTitle>
+      <CModalHeader closeButton={closeBtn}>
+        <CModalTitle id="FullscreenExample2">{modalObj?.title}</CModalTitle>
       </CModalHeader>
-      <CModalBody>{modalObj.msg}</CModalBody>
+      <CModalBody>{modalObj?.msg}</CModalBody>
     </CModal>
   )
 }
+
 MessageModal.propTypes = {
-  modalObj: PropTypes.object,
+  modalObj: PropTypes.shape({
+    alert: PropTypes.string, //"alert":"[alert|confirm]"
+    title: PropTypes.string, //"title":"訊息標題"
+    msg: PropTypes.string, //"msg":"訊息內容"
+    time: PropTypes.number, //"time":[執行的時間 單位毫秒]
+    navurl: PropTypes.string, //"navurl":"[如需要跳轉輸入url]"
+    closebtn: PropTypes.bool, //"closebtn":[true|false] 是否顯示關閉按鈕
+    type: PropTypes.string, //"type":"[空|reload:重新整理]""
+  }),
 }
+
 export default MessageModal
