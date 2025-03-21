@@ -1,9 +1,15 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import { cilGroup, cilGift, cilCart, cilWallet, cilUser } from '@coreui/icons'
+import { cilSpeedometer, cilGroup, cilGift, cilCart, cilWallet, cilUser } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
+  {
+    component: CNavItem,
+    name: '首頁',
+    to: '/dashboard',
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+  },
   {
     component: CNavGroup,
     name: '訂單管理',
@@ -24,16 +30,25 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: '儲值紀錄',
-    to: '/user/recharge/list',
-    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
+    name: '帳號管理',
+    to: '/user/info',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: '收支明細',
-        to: '/user/recharge/list',
+        name: '帳號資料',
+        to: '/user/info',
+      },
+      {
+        component: CNavItem,
+        name: '修改密碼',
+        to: '/user/pwd',
       },
     ],
+  },
+  {
+    component: CNavTitle,
+    name: '後台管理',
   },
   {
     component: CNavGroup,
@@ -53,14 +68,14 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: '經銷商分級設定',
+        name: '經銷商回饋設定',
         to: '/admin/dealer/level',
       },
     ],
   },
   {
     component: CNavGroup,
-    name: '產品管理(admin)',
+    name: '產品管理',
     to: '/admin/product/channel1',
     icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
     items: [
@@ -83,7 +98,7 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: '儲值管理(admin)',
+    name: '儲值管理',
     to: '/admin/recharge/list',
     icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
     items: [
@@ -96,7 +111,7 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: '公告管理(admin)',
+    name: '公告管理',
     to: '/admin/notifications/list',
     icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
     items: [
@@ -104,24 +119,6 @@ const _nav = [
         component: CNavItem,
         name: '公告列表',
         to: '/admin/notifications/list',
-      },
-    ],
-  },
-  {
-    component: CNavGroup,
-    name: '帳號管理(共用)',
-    to: '/user/info',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: '帳號資料',
-        to: '/user/info',
-      },
-      {
-        component: CNavItem,
-        name: '修改密碼',
-        to: '/user/pwd',
       },
     ],
   },

@@ -78,6 +78,7 @@ const Pwd = () => {
         time: 0,
         navurl: '',
         closebtn: true,
+        timestamp: Date.now(),
       })
       //清空輸入框欄位
       form.elements.inputOldPwd.value = ''

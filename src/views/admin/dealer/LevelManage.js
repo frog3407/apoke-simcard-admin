@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CButton,
   CRow,
@@ -16,89 +16,163 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilTrash, cilXCircle } from '@coreui/icons'
 import MessageModal from 'src/components/MessageModal'
+import { validateRange } from 'src/utils/validator'
+import { apiDealerFeedback, apiGetDealerFeedback } from 'src/utils/Api'
 
 const LevelManage = () => {
-  const [validated, setValidated] = useState(false)
   const [modalObj, setModalObj] = useState({}) //顯示modal
-  const handleSubmit = (event) => {
+  const [errors, setErrors] = useState({
+    feedback1: false,
+    feedback2: false,
+    feedback3: false,
+    feedback4: false,
+  })
+  const [feedback1, setFeedback1] = useState('')
+  const [feedback2, setFeedback2] = useState('')
+  const [feedback3, setFeedback3] = useState('')
+  const [feedback4, setFeedback4] = useState('')
+  // 呼叫 API 取得初始值
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const result = await apiGetDealerFeedback()
+        if (result.code === '0000') {
+          const { feedbackInfo } = result.result
+          console.log('feedbackInfo=' + feedbackInfo)
+          feedbackInfo.forEach((item) => {
+            if (item.feedbackName == '10萬') {
+              setFeedback1(item.feedbackValue || 0)
+            } else if (item.feedbackName == '20萬') {
+              setFeedback2(item.feedbackValue || 0)
+            } else if (item.feedbackName == '30萬') {
+              setFeedback3(item.feedbackValue || 0)
+            } else if (item.feedbackName == '50萬') {
+              setFeedback4(item.feedbackValue || 0)
+            }
+          })
+        } else {
+          console.error('API 回傳錯誤:', result.message)
+        }
+      } catch (error) {
+        console.error('API 呼叫失敗:', error)
+      }
+    }
+    fetchInitialData()
+  })
+
+  const handleSubmit = async (event) => {
     const form = event.currentTarget
     event.preventDefault()
     event.stopPropagation()
-    form.classList.add('was-validated')
-    if (form.checkValidity() === true) {
-      //檢查格式→呼叫API (未完成)
-      //form.classList.remove('is-invalid')
+    const feedback1 = form.elements.feedback1.value
+    const feedback2 = form.elements.feedback2.value
+    const feedback3 = form.elements.feedback3.value
+    const feedback4 = form.elements.feedback4.value
+    let isValid = true
+    let newErrors = { ...errors }
+    if (!validateRange(feedback1)) {
+      newErrors.feedback1 = true
+      isValid = false
+    } else {
+      newErrors.feedback1 = false
+    }
+    if (!validateRange(feedback2)) {
+      newErrors.feedback2 = true
+      isValid = false
+    } else {
+      newErrors.feedback2 = false
+    }
+    if (!validateRange(feedback3)) {
+      newErrors.feedback3 = true
+      isValid = false
+    } else {
+      newErrors.feedback3 = false
+    }
+    if (!validateRange(feedback4)) {
+      newErrors.feedback4 = true
+      isValid = false
+    } else {
+      newErrors.feedback4 = false
+    }
+    setErrors(newErrors)
+    if (!isValid) {
+      return
+    }
+    //呼叫API
+    const result = await apiDealerFeedback({
+      feedback1: feedback1,
+      feedback2: feedback2,
+      feedback3: feedback3,
+      feedback4: feedback4,
+    })
+    if (result.code === '0000') {
+      //修改密碼成功
       setModalObj({
         alert: 'alert',
         type: '',
         title: '訊息通知',
         msg: '儲存成功',
-        time: 1500,
+        time: 0,
         navurl: '',
+        closebtn: true,
+        timestamp: Date.now(),
       })
-      handleClickTransitionAlert(event)
-      //form.reset()
+    } else {
+      setModalObj({
+        alert: 'alert',
+        type: '',
+        title: '訊息通知',
+        msg: '儲存失敗，錯誤訊息:' + result.message,
+        time: 0,
+        navurl: '',
+        closebtn: true,
+        timestamp: Date.now(), // 添加唯一標識符
+      })
     }
-    setValidated(true)
   }
 
-  const handleClickTransitionAlert = (event) => {
-    setTimeout(() => {
-      setValidated(false)
-      //event.target.reset()
-    }, 1500)
-  }
   return (
     <CRow>
       <MessageModal modalObj={modalObj}></MessageModal>
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardHeader>
-            <strong>經銷商分級設定</strong>
+            <strong>經銷商金額回饋設定</strong>
           </CCardHeader>
           <CCardBody>
             <CRow className="mb-3 mx-5">
               <CCol sm={12}>
-                <small className="text-muted">
-                  分潤%數：依經銷商等級去算，換算後經銷商可以看到的產品價格；EX：成本300元，分潤%數輸入30，則300+30%=390元。
-                </small>
+                <small className="text-muted">請輸入回饋的%數</small>
               </CCol>
             </CRow>
-            <CForm
-              className="row mx-5 g-3 needs-validation"
-              noValidate
-              validated={validated}
-              onSubmit={handleSubmit}
-            >
+            <CForm className="row mx-5 g-3 needs-validation" noValidate onSubmit={handleSubmit}>
               <CTable bordered>
                 <CTableHead color="dark">
                   <CTableRow>
                     <CTableHeaderCell scope="col" className="text-end">
-                      分級名稱
+                      每次儲值金額
                     </CTableHeaderCell>
-                    <CTableHeaderCell scope="col">分潤%數</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">回饋%數</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
                   <CTableRow>
                     <CTableHeaderCell scope="row" className="text-end">
-                      銀光
+                      10萬
                     </CTableHeaderCell>
                     <CTableDataCell>
                       <CRow>
                         <CCol sm="auto">
                           <CFormInput
                             type="number"
-                            id="level1"
-                            defaultValue="50"
-                            required
-                            max={100}
-                            min={1}
+                            id="feedback1"
+                            defaultValue={feedback1}
+                            className={errors.feedback1 ? 'is-invalid' : ''}
                           />
-                          <CFormFeedback invalid>請輸入銀光分潤%數</CFormFeedback>
+                          {errors.feedback1 && (
+                            <CFormFeedback invalid>請輸入正確的10萬回饋%數</CFormFeedback>
+                          )}
                         </CCol>
                         <CCol sm="auto">%</CCol>
                       </CRow>
@@ -106,20 +180,20 @@ const LevelManage = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell scope="row" className="text-end">
-                      金燦
+                      20萬
                     </CTableHeaderCell>
                     <CTableDataCell>
                       <CRow>
                         <CCol sm="auto">
                           <CFormInput
                             type="number"
-                            id="level2"
-                            defaultValue="40"
-                            required
-                            max={100}
-                            min={1}
+                            id="feedback2"
+                            defaultValue={feedback2}
+                            className={errors.feedback2 ? 'is-invalid' : ''}
                           />
-                          <CFormFeedback invalid>請輸入金燦分潤%數</CFormFeedback>
+                          {errors.feedback2 && (
+                            <CFormFeedback invalid>請輸入正確的20萬回饋%數</CFormFeedback>
+                          )}
                         </CCol>
                         <CCol sm="auto">%</CCol>
                       </CRow>
@@ -127,20 +201,20 @@ const LevelManage = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell scope="row" className="text-end">
-                      白金
+                      30萬
                     </CTableHeaderCell>
                     <CTableDataCell>
                       <CRow>
                         <CCol sm="auto">
                           <CFormInput
                             type="number"
-                            id="level3"
-                            defaultValue="45"
-                            required
-                            max={100}
-                            min={1}
+                            id="feedback3"
+                            defaultValue={feedback3}
+                            className={errors.feedback3 ? 'is-invalid' : ''}
                           />
-                          <CFormFeedback invalid>請輸入白金分潤%數</CFormFeedback>
+                          {errors.feedback3 && (
+                            <CFormFeedback invalid>請輸入正確的30萬回饋%數</CFormFeedback>
+                          )}
                         </CCol>
                         <CCol sm="auto">%</CCol>
                       </CRow>
@@ -148,20 +222,20 @@ const LevelManage = () => {
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell scope="row" className="text-end">
-                      黑鑽
+                      50萬
                     </CTableHeaderCell>
                     <CTableDataCell>
                       <CRow>
                         <CCol sm="auto">
                           <CFormInput
                             type="number"
-                            id="level4"
-                            defaultValue="35"
-                            required
-                            max={100}
-                            min={1}
+                            id="feedback4"
+                            defaultValue={feedback4}
+                            className={errors.feedback4 ? 'is-invalid' : ''}
                           />
-                          <CFormFeedback invalid>請輸入黑鑽分潤%數</CFormFeedback>
+                          {errors.feedback4 && (
+                            <CFormFeedback invalid>請輸入正確的50萬回饋%數</CFormFeedback>
+                          )}
                         </CCol>
                         <CCol sm="auto">%</CCol>
                       </CRow>

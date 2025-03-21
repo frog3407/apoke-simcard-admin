@@ -57,6 +57,7 @@ const Detail = () => {
         msg: '儲值成功',
         time: 1500,
         navurl: '',
+        timestamp: Date.now(),
       })
     }
     setValidated(true)

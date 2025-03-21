@@ -111,7 +111,15 @@ export const apiAddAdmin = (data) =>
 //新增經銷商
 export const apiAddDealer = (data) =>
   fetchDataCall('user/adddealer', 'post', data, false, false, true)
+//經銷商價格設定
 export const apiDealerPrice = (data) =>
   fetchDataCall('manage/dealerprice', 'post', data, false, false, true)
+//取得經銷商價格設定值
 export const apiGetDealerPrice = () =>
   fetchDataCall('manage/getdealerprice', 'get', null, false, false, true)
+//經銷商回饋設定
+export const apiDealerFeedback = (data) =>
+  fetchDataCall('manage/dealerfeedback', 'post', data, false, false, true)
+//取得經銷商回饋設定值
+export const apiGetDealerFeedback = () =>
+  fetchDataCall('manage/getdealerfeedback', 'get', null, false, false, true)

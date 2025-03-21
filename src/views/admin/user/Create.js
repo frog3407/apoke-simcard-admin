@@ -442,6 +442,7 @@ const Create = () => {
           msg: '建立成功',
           time: 2500,
           navurl: '',
+          timestamp: Date.now(),
         })
       } else {
         setErrorMessage('建立失敗，錯誤訊息:' + result.message)
@@ -463,6 +464,7 @@ const Create = () => {
           msg: '建立成功',
           time: 2500,
           navurl: '/admin/user/list',
+          timestamp: Date.now(),
         })
       } else {
         setErrorMessage('建立失敗，錯誤訊息:' + result.message)

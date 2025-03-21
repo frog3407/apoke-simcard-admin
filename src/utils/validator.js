@@ -30,3 +30,13 @@ export const validateNumber = (value) => {
   const regex = /^(?!0$)(100(\.0)?|[1-9]?\d(\.\d)?)$/
   return regex.test(value)
 }
+
+/**
+ * 驗證數值範圍是否在0-100之間
+ * @param {string | number} value - 要檢查的數值
+ * @returns {boolean} - 是否符合範圍
+ */
+export const validateRange = (value) => {
+  const regex = /^(100|[1-9]?\d|0)$/
+  return regex.test(value)
+}
