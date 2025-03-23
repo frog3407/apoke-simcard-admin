@@ -123,3 +123,20 @@ export const apiDealerFeedback = (data) =>
 //取得經銷商回饋設定值
 export const apiGetDealerFeedback = () =>
   fetchDataCall('manage/getdealerfeedback', 'get', null, false, false, true)
+//取得公告類型
+export const apiGetPostsCategories = () =>
+  fetchDataCall('posts/categories', 'get', null, false, false, true)
+//取得公告列表
+export const apiGetPostsList = (data) =>
+  fetchDataCall('posts/list', 'get', data, false, false, true)
+//取得公告內容
+export const apiGetPost = (id) =>
+  fetchDataCall(`posts/detail/${id}`, 'get', null, false, false, true)
+//新增公告
+export const apiAddPost = (data) => fetchDataCall('posts/create', 'post', data, false, false, true)
+//修改公告
+export const apiEditPost = (id, data) =>
+  fetchDataCall(`posts/edit/${id}`, 'put', data, false, false, true)
+//刪除公告
+export const apiDeletePost = (data) =>
+  fetchDataCall('posts/delete/', 'delete', data, false, false, true)

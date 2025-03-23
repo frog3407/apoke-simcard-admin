@@ -147,7 +147,7 @@ const Pwd = () => {
                 </CCol>
               </CRow>
               <CRow className="mb-3">
-                <CCol xs={1}>
+                <CCol xs={2}>
                   <CButton color="primary" type="submit">
                     修改密碼
                   </CButton>

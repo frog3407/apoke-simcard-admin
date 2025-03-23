@@ -16,8 +16,9 @@ const Product1 = React.lazy(() => import('./views/admin/product/Channel1'))
 const Product2 = React.lazy(() => import('./views/admin/product/Channel2'))
 const LevelManage = React.lazy(() => import('./views/admin/dealer/LevelManage'))
 const AdminRechargeList = React.lazy(() => import('./views/admin/recharge/List'))
-const NotificationsList = React.lazy(() => import('./views/admin/notifications/List'))
-const NotificationsEdit = React.lazy(() => import('./views/admin/notifications/Edit'))
+const PostsList = React.lazy(() => import('./views/admin/posts/List'))
+const PostsEdit = React.lazy(() => import('./views/admin/posts/Edit'))
+const PostsAdd = React.lazy(() => import('./views/admin/posts/Add'))
 //首頁
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const DashboardDetail = React.lazy(() => import('./views/dashboard/Detail'))
@@ -39,8 +40,9 @@ const routes = [
   { path: '/admin/user/list', name: '經銷商列表', element: UserList },
   { path: '/admin/user/detail/:id', name: '經銷商詳細資料', element: UserDetail }, //這邊的path有改要改AppBreadcrumb.js裡面的邏輯
   { path: '/admin/dealer/level', name: '經銷商金額回饋設定', element: LevelManage },
-  { path: '/admin/notifications/list', name: '公告列表', element: NotificationsList },
-  { path: '/admin/notifications/edit/:id', name: '編輯公告', element: NotificationsEdit },
+  { path: '/admin/posts/list', name: '公告列表', element: PostsList },
+  { path: '/admin/posts/edit/:id', name: '編輯公告', element: PostsEdit },
+  { path: '/admin/posts/add', name: '新增公告', element: PostsAdd },
 ]
 
 export default routes

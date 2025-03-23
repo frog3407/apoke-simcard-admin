@@ -8,22 +8,30 @@ const MessageModal = ({ modalObj }) => {
   const [closeBtn, setCloseBtn] = useState(false)
   const navigate = useNavigate()
 
-  const handleNavigation = (navurl, type) => {
+  const handleNavigation = (navurl) => {
     if (navurl) {
       navigate(navurl)
     }
   }
 
-  const startTimer = (time, type) => {
+  const startTimer = (time, type, navurl) => {
     if (time && time > 0) {
+      console.log('start timer:', time)
       setTimeout(() => {
         setVisible(false)
         if (type === 'reload') {
           navigate(0) // 在計時器結束後觸發重新整理
+        } else if (navurl) {
+          handleNavigation(navurl) // 在計時器結束後觸發跳轉
         }
       }, time)
-    } else if (type === 'reload') {
-      navigate(0) // 若無計時器，立即觸發重新整理
+    } else {
+      console.log('no timer, trigger immediately')
+      if (type === 'reload') {
+        navigate(0) // 若無計時器，立即觸發重新整理
+      } else if (navurl) {
+        handleNavigation(navurl) // 若無計時器，立即觸發跳轉
+      }
     }
   }
 
@@ -35,11 +43,8 @@ const MessageModal = ({ modalObj }) => {
 
     const { closebtn, navurl, type, time } = modalObj
     setCloseBtn(!!closebtn)
-    if (navurl) {
-      handleNavigation(navurl, type)
-    }
     setVisible(true)
-    startTimer(time, type) // 傳遞 type 以處理 reload 邏輯
+    startTimer(time, type, navurl) // 傳遞 navurl 以處理跳轉邏輯
   }, [JSON.stringify(modalObj)]) // 使用 JSON.stringify 比較 modalObj 的變化
 
   return (
