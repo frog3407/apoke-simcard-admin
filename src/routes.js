@@ -3,7 +3,6 @@ import React from 'react'
 //給經銷商用的
 const OrderCreate = React.lazy(() => import('./views/order/Create'))
 const OrderList = React.lazy(() => import('./views/order/List'))
-const RechargeList = React.lazy(() => import('./views/recharge/List'))
 const UserInfo = React.lazy(() => import('./views/user/Info'))
 const UserRestPwd = React.lazy(() => import('./views/user/Pwd'))
 
@@ -29,7 +28,6 @@ const routes = [
   { path: '/dashboard/detail/:id', name: '公告內容', element: DashboardDetail },
   { path: '/order/create', name: '建立訂單', element: OrderCreate },
   { path: '/order/list', name: '訂單查詢', element: OrderList },
-  { path: '/user/recharge/list', name: '收支明細', element: RechargeList },
   { path: '/user/info', name: '帳號資料', element: UserInfo },
   { path: '/user/pwd', name: '修改密碼', element: UserRestPwd },
   { path: '/admin/recharge/list', name: '儲值紀錄', element: AdminRechargeList },

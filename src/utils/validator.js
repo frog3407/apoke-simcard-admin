@@ -40,3 +40,13 @@ export const validateRange = (value) => {
   const regex = /^(100|[1-9]?\d|0)$/
   return regex.test(value)
 }
+
+/**
+ * 驗證數字是否為0以上且不可為小數點
+ * @param {string | number} value - 要檢查的數值
+ * @returns {boolean} - 是否符合規範
+ */
+export const validatePositiveInteger = (value) => {
+  const regex = /^[1-9]\d*|0$/
+  return regex.test(value)
+}
