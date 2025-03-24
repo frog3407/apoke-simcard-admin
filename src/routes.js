@@ -14,6 +14,7 @@ const ProductManage = React.lazy(() => import('./views/admin/product/ProductMana
 const Product1 = React.lazy(() => import('./views/admin/product/Channel1'))
 const Product2 = React.lazy(() => import('./views/admin/product/Channel2'))
 const LevelManage = React.lazy(() => import('./views/admin/dealer/LevelManage'))
+const DealerUserList = React.lazy(() => import('./views/admin/dealer/List'))
 const AdminRechargeList = React.lazy(() => import('./views/admin/recharge/List'))
 const PostsList = React.lazy(() => import('./views/admin/posts/List'))
 const PostsEdit = React.lazy(() => import('./views/admin/posts/Edit'))
@@ -35,7 +36,8 @@ const routes = [
   { path: '/admin/product/channel1', name: '渠道1(joytel)', element: Product1 },
   { path: '/admin/product/channel2', name: '渠道2(tgt)', element: Product2 },
   { path: '/admin/user/create', name: '建立帳戶', element: UserCreate },
-  { path: '/admin/user/list', name: '經銷商列表', element: UserList },
+  { path: '/admin/user/list', name: '管理者列表', element: UserList },
+  { path: '/admin/dealer/list', name: '經銷商列表', element: DealerUserList },
   { path: '/admin/user/detail/:id', name: '經銷商詳細資料', element: UserDetail }, //這邊的path有改要改AppBreadcrumb.js裡面的邏輯
   { path: '/admin/dealer/level', name: '經銷商金額回饋設定', element: LevelManage },
   { path: '/admin/posts/list', name: '公告列表', element: PostsList },

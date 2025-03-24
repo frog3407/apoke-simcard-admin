@@ -138,8 +138,8 @@ export const apiAddPost = (data) => fetchDataCall('posts/create', 'post', data, 
 export const apiEditPost = (id, data) =>
   fetchDataCall(`posts/edit/${id}`, 'put', data, false, false, true)
 //刪除公告
-export const apiDeletePost = (data) =>
-  fetchDataCall('posts/delete/', 'delete', data, false, false, true)
+export const apiDeletePost = (id) =>
+  fetchDataCall(`posts/delete/${id}`, 'delete', null, false, false, true)
 //新增儲值紀錄
 export const apiAddRecharge = (data) =>
   fetchDataCall('recharge/addrecharge', 'post', data, false, false, true)
@@ -152,3 +152,6 @@ export const apiGetDealers = (data) =>
 //取得經銷商名稱列表
 export const apiGetDealerNames = () =>
   fetchDataCall('user/dealernamelist', 'get', null, false, false, true)
+//編輯經銷商資料
+export const apiEditDealer = (data) =>
+  fetchDataCall('user/editdealer', 'post', data, false, false, true)

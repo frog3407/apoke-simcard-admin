@@ -69,10 +69,15 @@ const _nav = [
         name: '建立帳戶',
         to: '/admin/user/create',
       },
+      // {
+      //   component: CNavItem,
+      //   name: '管理員列表',
+      //   to: '/admin/user/list',
+      // },
       {
         component: CNavItem,
         name: '經銷商列表',
-        to: '/admin/user/list',
+        to: '/admin/dealer/list',
       },
       {
         component: CNavItem,
