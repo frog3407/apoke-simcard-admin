@@ -1,0 +1,12 @@
+deploy_frontend:
+  stage: deploy
+  image: node:18
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+    - npm install -g firebase-tools
+    - echo "$FIREBASE_TOKEN" > token.txt
+    - firebase deploy --only hosting --token "$FIREBASE_TOKEN"
+  only:
+    - firebase
