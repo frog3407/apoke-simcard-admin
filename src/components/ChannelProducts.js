@@ -45,7 +45,7 @@ const ChannelProducts = (props) => {
   //從MCC list.xlsx 檔案取出資料，可以讓tgt產品資料的MCC對應國家地區名稱
   useEffect(() => {
     if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL2) {
-      fetch('./MCC list.xlsx')
+      fetch('/MCC list.xlsx')
         .then((response) => response.arrayBuffer()) // 將檔案讀取為 ArrayBuffer
         .then((buffer) => {
           const workbook = XLSX.read(buffer, { type: 'array' })
@@ -112,7 +112,7 @@ const ChannelProducts = (props) => {
     setIsLoading(true)
     if (channelName === import.meta.env.VITE_PRODUCT_CHANNEL1) {
       //透過excel檔案的到產品資料
-      fetch('./joytel-products-esim.xlsx')
+      fetch('/joytel-products-esim.xlsx')
         .then((response) => response.arrayBuffer()) // 將檔案讀取為 ArrayBuffer
         .then((buffer) => {
           const workbook = XLSX.read(buffer, { type: 'array' })
