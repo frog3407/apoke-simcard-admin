@@ -33,7 +33,7 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Suspense
         fallback={
           <div className="pt-3 text-center">
@@ -49,7 +49,7 @@ const App = () => {
           <Route path="*" name="首頁" element={<DefaultLayout />} />
         </Routes>
       </Suspense>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 

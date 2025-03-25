@@ -23,7 +23,7 @@ const AppBreadcrumb = () => {
       //經銷商詳細資料的Breadcrumbs
       const searchPathname = '/admin/user/list'
       breadcrumbs.push({
-        pathname: '/#' + searchPathname,
+        pathname: searchPathname,
         name: getRouteName(searchPathname, routes),
         active: false,
       })
